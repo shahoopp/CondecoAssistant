@@ -11,7 +11,6 @@ public static class AutomationRunner
 {
     public static async Task RunAsync()
     {
-
         var prefs = PreferencesStorage.Load();
         string username = prefs.Username;
         string password = prefs.Password;
@@ -50,55 +49,49 @@ public static class AutomationRunner
         await Locators_Condeco.SignInPage_SignInButton(page).ClickAsync();
         Console.WriteLine("Clicked on 'Sign in' button.");
 
-        /*await Locators.LocationDropdown(page).ClickAsync();
-        await Locators.OneYorkLocationOption(page).ClickAsync();
-        Console.WriteLine("Selected location.");
-        //await page.PauseAsync();
-
-        await Locators.GroupDropdown(page).ClickAsync();
-        await Locators.ITGroupOption(page).ClickAsync();
-        Console.WriteLine("Selected group.");
-        //await page.PauseAsync();
-
-        await Locators.FloorDropdown(page).ClickAsync();
-        await Locators.SixteenthFloorOption(page).ClickAsync();
-        Console.WriteLine("Selected floor.");
-        //await page.PauseAsync();
-
-        await Locators.WorkspaceType(page).ClickAsync();
-        await Locators.DeskWorkspaceOption(page).ClickAsync();
-        Console.WriteLine("Selected workspace type.");
-        //await page.PauseAsync();
-
-        await Locators.CalendarButton(page).ClickAsync();
-        await Locators.BookingDate(page).ClickAsync();
-        Console.WriteLine("Selected booking date.");
-        //await page.PauseAsync();
-
-        await Locators.PersonalSpacesButton(page).ClickAsync();
+        await Locators_Condeco.PersonalSpacesButton(page).ClickAsync();
         Console.WriteLine("Clicked on 'Personal Spaces' button.");
 
-        await Locators.BookAPersonalSpaceButton(page).ClickAsync();
+        await Locators_Condeco.BookAPersonalSpaceButton(page).ClickAsync();
         Console.WriteLine("Clicked on 'Book a Personal Space' button.");
 
-        await Locators.CountryDropdown(page).ClickAsync();
+        await Locators_Condeco.CountryDropdown(page).ClickAsync();
         Console.WriteLine("Clicked on 'Country' dropdown.");
 
-        await Locators.LocationDropdown(page).ClickAsync();
+        await Locators_Condeco.LocationDropdown(page).ClickAsync();
         Console.WriteLine("Clicked on 'Location' dropdown.");
 
-        await Locators.GroupDropdown(page).ClickAsync();
+        await Locators_Condeco.GroupDropdown(page).ClickAsync();
         Console.WriteLine("Clicked on 'Group' dropdown.");
 
-        await Locators.FloorDropdown(page).ClickAsync();
+        await Locators_Condeco.FloorDropdown(page).ClickAsync();
         Console.WriteLine("Clicked on 'Floor' dropdown.");
 
-        await Locators.WorkspaceTypeDropdown(page).ClickAsync();
+        await Locators_Condeco.WorkspaceTypeDropdown(page).ClickAsync();
         Console.WriteLine("Clicked on 'Workspace Type' dropdown.");
         await page.PauseAsync();
 
-        await Locators.BookingDateOne(page).ClickAsync();
-        Console.WriteLine("Selected 'Booking Date One'.");
+        try
+        {
+            if (Locators_Condeco.BookingDates(page)[0] != null)
+            {
+                await Locators_Condeco.BookingDates(page)[0].ClickAsync();
+            }
+            if(Locators_Condeco.BookingDates(page)[1] != null)
+            {
+                await Locators_Condeco.BookingDates(page)[1].ClickAsync();
+            }
+            if (Locators_Condeco.BookingDates(page)[2] != null)
+            {
+                await Locators_Condeco.BookingDates(page)[2].ClickAsync();
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error selecting booking dates: {ex.Message}");
+        }
+
+        await page.PauseAsync();
 
         //await Locators.BookingDateTwo(page).ClickAsync();
         //Console.WriteLine("Selected 'Booking Date Two'.");
@@ -106,21 +99,21 @@ public static class AutomationRunner
         //await Locators.BookingDateThree(page).ClickAsync();
         //Console.WriteLine("Selected 'Booking Date Three'.");
 
-        await Locators.SearchButton(page).ClickAsync();
+        await Locators_Condeco.SearchButton(page).ClickAsync();
         Console.WriteLine("Clicked on 'Search' button.");
         await page.PauseAsync();
 
-        await SixteenthFloorDeskLocators.W103(page).ClickAsync();
+        await Locators_Desks.W103(page).ClickAsync();
         Console.WriteLine("Clicked on 'W103' desk.");
         await page.PauseAsync();
 
-        await SixteenthFloorDeskLocators.BookDeskButton(page).ClickAsync();
+        await Locators_Desks.BookDeskButton(page).ClickAsync();
         Console.WriteLine("Booked the desk.");
         await page.PauseAsync();
 
-        await SixteenthFloorDeskLocators.OKButton(page).ClickAsync();
+        await Locators_Desks.OKButton(page).ClickAsync();
         Console.WriteLine("Clicked on 'OK' button.");
-        await page.PauseAsync();*/
+        await page.PauseAsync();
 
         await browser.CloseAsync();
     }

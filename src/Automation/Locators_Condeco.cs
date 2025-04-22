@@ -2,6 +2,9 @@ using Microsoft.Playwright;
 using CondecoAssistant.Helpers;
 using CondecoAssistant.Models;
 
+namespace CondecoAssistant.Automation;
+
+
 public static class Locators_Condeco
 {
     // Sign in page
@@ -9,10 +12,17 @@ public static class Locators_Condeco
         page.GetByRole(AriaRole.Textbox, new() { Name = "someone@example.com" });
     public static ILocator SignInPageNextButton(IPage page) =>
         page.GetByRole(AriaRole.Button, new() { Name = "Next" });
-    public static ILocator PasswordField(IPage page) =>
-        page.GetByRole(AriaRole.Textbox, new() { Name = "Enter the password for slone@" });
+    public static ILocator PasswordField(IPage page)
+    {
+        var prefs = PreferencesStorage.Load();
+        string email = prefs.Username ?? "";
+        string namePart = email.Contains('@') ? email.Split('@')[0] : email;
+        string fieldLabel = $"Enter the password for {namePart}@";
+        return page.GetByRole(AriaRole.Textbox, new() { Name = fieldLabel });
+    }
     public static ILocator SignInPage_SignInButton(IPage page) =>
-        page.GetByRole(AriaRole.Button, new() { Name = "Sign in" });
+    page.GetByRole(AriaRole.Button, new() { Name = "Sign in" });
+
 
     // Left Navigation Menu
     public static ILocator PersonalSpacesButton(IPage page) =>
@@ -23,6 +33,7 @@ public static class Locators_Condeco
         page.FrameLocator("iframe[name=\"leftNavigation\"]")
             .GetByRole(AriaRole.Link, new() { Name = "Book a personal space" });
 
+    // Book a Personal Space page
     public static ILocator CountryDropdown(IPage page) =>
         page.FrameLocator("iframe[name=\"mainDisplayFrame\"]")
             .GetByLabel("Country");
@@ -43,51 +54,22 @@ public static class Locators_Condeco
         page.FrameLocator("iframe[name=\"mainDisplayFrame\"]")
             .GetByText("Workspace type Desk");
 
-    public static ILocator BookingDateOne(IPage page) =>
-        page.FrameLocator("iframe[name=\"mainDisplayFrame\"]")
-            .GetByText("21", new() { Exact = true });
+    // Booking date(s)
 
-    public static ILocator BookingDateTwo(IPage page) =>
-        page.FrameLocator("iframe[name=\"mainDisplayFrame\"]")
-            .GetByText("21", new() { Exact = true });
-
-    public static ILocator BookingDateThree(IPage page) =>
-        page.FrameLocator("iframe[name=\"mainDisplayFrame\"]")
-            .GetByText("21", new() { Exact = true });
-
+    public static List<ILocator> BookingDates(IPage page)
+    {
+        var days = DateHelper.GetBookingDayNumbersFromPreferences();
+        var locators = new List<ILocator>();
+        foreach (var day in days)
+        {
+            locators.Add(page.FrameLocator("iframe[name=\"mainDisplayFrame\"]")
+                .GetByText(day.ToString(), new() { Exact = true }));
+        }
+        return locators;
+    }
+    
     public static ILocator SearchButton(IPage page) =>
         page.FrameLocator("iframe[name=\"mainDisplayFrame\"]")
             .GetByRole(AriaRole.Button, new() { Name = "Search" });
 
-
-
-
-    // Home page
-
-    public static ILocator OneYorkLocationOption(IPage page) =>
-        page.FrameLocator("iframe[name=\"mainDisplayFrame\"]")
-            .GetByText("One York StreetLocation");
-
-
-    public static ILocator ITGroupOption(IPage page) =>
-        page.FrameLocator("iframe[name=\"mainDisplayFrame\"]")
-            .GetByText("ITGroup");
-
-    public static ILocator SixteenthFloorOption(IPage page) =>
-        page.FrameLocator("iframe[name=\"mainDisplayFrame\"]")
-            .GetByText("17Floor");
-
-    public static ILocator WorkspaceType(IPage page) =>
-        page.FrameLocator("iframe[name=\"mainDisplayFrame\"]")
-            .GetByLabel("Workspace type");
-    public static ILocator DeskWorkspaceOption(IPage page) =>
-        page.FrameLocator("iframe[name=\"mainDisplayFrame\"]")
-            .GetByText("Desk Workspace type");
-
-    public static ILocator CalendarButton(IPage page) =>
-        page.FrameLocator("iframe[name=\"mainDisplayFrame\"]")
-            .GetByRole(AriaRole.Button, new() { Name = "Calendar" });
-    public static ILocator BookingDate(IPage page) =>
-        page.FrameLocator("iframe[name=\"mainDisplayFrame\"]")
-            .GetByRole(AriaRole.Button, new() { Name = "21/04/" });
 }

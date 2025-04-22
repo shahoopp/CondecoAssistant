@@ -7,7 +7,7 @@
    xmlns:local="clr-namespace:CondecoAssistant"  
    mc:Ignorable="d"  
    Title="CondecoAssistant"  
-   Height="400"  
+   Height="500"  
    Width="600">  
    <Grid>  
        <!-- Header -->  
