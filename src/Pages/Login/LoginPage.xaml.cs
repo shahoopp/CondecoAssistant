@@ -8,7 +8,8 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using CondecoAssistant.Pages.Home; 
+using CondecoAssistant.Pages.Home;
+using CondecoAssistant.Helpers;
 
 namespace CondecoAssistant.Pages.Login;
 
@@ -17,6 +18,11 @@ public partial class LoginPage : Page
     public LoginPage()
     {
         InitializeComponent();
+
+        // Load saved preferences
+        var prefs = PreferencesStorage.Load();
+        UsernameBox.Text = prefs.Username;
+        PasswordBox.Password = prefs.Password;
     }
 
     private void BackButton_Click(object sender, RoutedEventArgs e)
@@ -27,11 +33,11 @@ public partial class LoginPage : Page
 
     private void SaveButton_Click(object sender, RoutedEventArgs e)
     {
-        // Save the login information
-        string username = UsernameBox.Text;
-        string password = PasswordBox.Password;
-        // Here you would typically save the credentials securely
-        // For demonstration, we'll just show a message box
-        MessageBox.Show($"Username: {username}\nPassword: {password}", "Credentials Saved", MessageBoxButton.OK, MessageBoxImage.Information);
+        var prefs = PreferencesStorage.Load();
+        prefs.Username = UsernameBox.Text;
+        prefs.Password = PasswordBox.Password;
+        PreferencesStorage.Save(prefs);
+        MessageBox.Show("Login info saved.");
+
     }
 }
