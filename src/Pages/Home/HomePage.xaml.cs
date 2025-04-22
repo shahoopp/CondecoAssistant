@@ -8,8 +8,11 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using CondecoAssistant.Pages.Login;
+using CondecoAssistant.Pages.Days;
+using CondecoAssistant.Pages.Desks;
 
-namespace CondecoAssistant;
+namespace CondecoAssistant.Pages.Home;
 
 public partial class HomePage : Page
 {

@@ -11,8 +11,10 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using CondecoAssistant.Pages.Home;
 
-namespace CondecoAssistant;
+
+namespace CondecoAssistant.Pages.Desks;
 
 public partial class DesksPage : Page
 {
