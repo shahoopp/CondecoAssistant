@@ -1,0 +1,68 @@
+<Page x:Class="CondecoAssistant.DesksPage"
+     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+     xmlns:local="clr-namespace:CondecoAssistant"
+     Background="White">
+    <Grid Margin="20">
+        <Button 
+           Content="Back" 
+           HorizontalAlignment="Left" 
+           VerticalAlignment="Top" 
+           Margin="10,10,10,0" 
+           Width="75" 
+           Height="30" 
+           Click="BackButton_Click" />
+
+        <WrapPanel 
+           VerticalAlignment="Center" 
+           HorizontalAlignment="Center" 
+           Margin="0,40,0,0" 
+           ItemWidth="120"
+           ItemHeight="60">
+
+            <ToggleButton 
+                x:Name="DeskW100"
+                Content="16-W100"
+                Click="DeskToggle_Click"
+                Margin="10"/>
+            <ToggleButton
+                x:Name="DeskW101"
+                Content="16-W101"
+                Click="DeskToggle_Click"
+                Margin="10"/>
+            <ToggleButton 
+                x:Name="DeskW102"
+                Content="16-W102"
+                Click="DeskToggle_Click"
+                Margin="10"/>
+            <ToggleButton 
+                x:Name="DeskW103"
+                Content="16-W103"
+                Click="DeskToggle_Click"
+                Margin="10"/>
+            <ToggleButton 
+                x:Name="DeskW104"
+                Content="16-W104"
+                Click="DeskToggle_Click"
+                Margin="10"/>
+            <ToggleButton 
+                x:Name="DeskW105"
+                Content="16-W105"
+                Click="DeskToggle_Click"
+                Margin="10"/>
+            <ToggleButton 
+                x:Name="DeskW106"
+                Content="16-W106"
+                Click="DeskToggle_Click"
+                Margin="10"/>
+            <ToggleButton 
+                x:Name="DeskW107"
+                Content="16-W107"
+                Click="DeskToggle_Click"
+                Margin="10"/>
+
+        </WrapPanel>
+    </Grid>
+</Page>
