@@ -38,6 +38,18 @@ public partial class LoginPage : Page
         prefs.Password = PasswordBox.Password;
         PreferencesStorage.Save(prefs);
         MessageBox.Show("Login info saved.");
+    }
 
+    private void ShowPassWordButton_PreviewMouseDown(object sender, MouseButtonEventArgs e)
+    {
+        VisiblePasswordBox.Text = PasswordBox.Password;
+        VisiblePasswordBox.Visibility = Visibility.Visible;
+        PasswordBox.Visibility = Visibility.Collapsed;
+    }
+
+    private void ShowPassWordButton_PreviewMouseUp(object sender, MouseButtonEventArgs e)
+    {
+        VisiblePasswordBox.Visibility = Visibility.Collapsed;
+        PasswordBox.Visibility = Visibility.Visible;
     }
 }
