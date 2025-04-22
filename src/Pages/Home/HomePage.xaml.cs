@@ -11,6 +11,8 @@ using System.Windows.Shapes;
 using CondecoAssistant.Pages.Login;
 using CondecoAssistant.Pages.Days;
 using CondecoAssistant.Pages.Desks;
+using CondecoAssistant.Automation;
+using System.Threading.Tasks;
 
 namespace CondecoAssistant.Pages.Home;
 
@@ -53,5 +55,17 @@ public partial class HomePage : Page
     {
         ((MainWindow)Application.Current.MainWindow).MainFrame.Navigate(new DesksPage());
         ((MainWindow)Application.Current.MainWindow).HeaderText.Text = "Desks";
+    }
+    private async void RunAutomationButton_Click(object sender, RoutedEventArgs e)
+    {
+        try
+        {
+            await CondecoAssistant.Automation.AutomationRunner.RunAsync();
+            MessageBox.Show("Automation completed successfully.", "Done", MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show($"An error occurred: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
     }
 }
