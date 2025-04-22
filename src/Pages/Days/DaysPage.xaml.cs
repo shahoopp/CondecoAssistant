@@ -12,6 +12,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using CondecoAssistant.Pages.Home;
+using CondecoAssistant.Helpers;
 
 
 namespace CondecoAssistant.Pages.Days;
@@ -23,16 +24,12 @@ public partial class DaysPage : Page
     {
         InitializeComponent();
 
-        dayButtons = new List<ToggleButton> 
-        {   
-            MondayButton, 
-            TuesdayButton, 
-            WednesdayButton, 
-            ThursdayButton, 
-            FridayButton
-        };
-
-        // Load any saved selection here later
+        var prefs = PreferencesStorage.Load();
+        MondayButton.IsChecked = prefs.SelectedDays.Contains("Monday");
+        TuesdayButton.IsChecked = prefs.SelectedDays.Contains("Tuesday");
+        WednesdayButton.IsChecked = prefs.SelectedDays.Contains("Wednesday");
+        ThursdayButton.IsChecked = prefs.SelectedDays.Contains("Thursday");
+        FridayButton.IsChecked = prefs.SelectedDays.Contains("Friday");
     }
 
     private void BackButton_Click(object sender, RoutedEventArgs e)
@@ -43,7 +40,29 @@ public partial class DaysPage : Page
 
     private void DayToggle_Click(object sender, RoutedEventArgs e)
     {
-        var selected = dayButtons.Where(b => b.IsChecked == true).ToList();
+        var prefs = PreferencesStorage.Load();
+
+        var selected = new List<String>();
+        if (MondayButton.IsChecked == true)
+        {
+            selected.Add("Monday");
+        }
+        if (TuesdayButton.IsChecked == true)
+        {
+            selected.Add("Tuesday");
+        }
+        if (WednesdayButton.IsChecked == true)
+        {
+            selected.Add("Wednesday");
+        }
+        if (ThursdayButton.IsChecked == true)
+        {
+            selected.Add("Thursday");
+        }
+        if (FridayButton.IsChecked == true)
+        {
+            selected.Add("Friday");
+        }
 
         if (selected.Count > 3)
         {
@@ -52,7 +71,7 @@ public partial class DaysPage : Page
             return;
         }
 
-        var selectedDays = selected.Select(b => b.Content.ToString()).ToList();
-        System.Diagnostics.Debug.WriteLine("Selected days: " + string.Join(", ", selectedDays));
+        prefs.SelectedDays = selected;
+        PreferencesStorage.Save(prefs);
     }
 }
