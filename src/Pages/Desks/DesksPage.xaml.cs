@@ -12,6 +12,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using CondecoAssistant.Pages.Home;
+using CondecoAssistant.Helpers;
 
 
 namespace CondecoAssistant.Pages.Desks;
@@ -36,7 +37,7 @@ public partial class DesksPage : Page
             DeskW107
         };
 
-        // Load any saved selection here later
+        LoadSavedDesks();
     }
 
     private void BackButton_Click(object sender, RoutedEventArgs e)
@@ -45,22 +46,55 @@ public partial class DesksPage : Page
         ((MainWindow)Application.Current.MainWindow).HeaderText.Text = "Condeco Assistant";
     }
 
+    private void SaveDeskSelections()
+    {
+        var prefs = PreferencesStorage.Load();
+        prefs.SelectedDesksInPriority = selectedDesks
+            .Select(b => b.Content.ToString()
+            .Split('\n')[0])
+            .ToList();
+        PreferencesStorage.Save(prefs);
+    }
+
     private void DeskToggle_Click(object sender, RoutedEventArgs e)
     {
         var button = (ToggleButton)sender;
 
-        if (button.IsChecked == true)
+        if (button.IsChecked == true && !selectedDesks.Contains(button))
         {
-            selectedDesks.Add(button);
+            if(button != null)
+                selectedDesks.Add(button);
         }
-        else
+        else if (button.IsChecked == false)
         {
             selectedDesks.Remove(button);
         }
 
+        SaveDeskSelections();
         UpdateDeskLabels();
     }
-       
+
+
+
+    private void LoadSavedDesks()
+    {
+        var prefs = PreferencesStorage.Load();
+        foreach (var desk in deskButtons)
+        {
+            string deskName = desk.Content.ToString();
+            if (prefs.SelectedDesksInPriority.Contains(deskName))
+            {
+                desk.IsChecked = true;
+                selectedDesks.Add(desk);
+            }
+            else
+            {
+                desk.IsChecked = false;
+            }
+        }
+        UpdateDeskLabels();
+    }
+
     private void UpdateDeskLabels()
     {
         foreach (var desk in deskButtons)
