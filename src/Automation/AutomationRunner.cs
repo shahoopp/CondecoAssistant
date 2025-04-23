@@ -3,6 +3,9 @@ using System;
 using System.Threading.Tasks;
 using CondecoAssistant.Helpers;
 using CondecoAssistant.Models;
+using System.Windows;
+using System.Diagnostics;
+using System.Security.Cryptography.X509Certificates;
 
 
 namespace CondecoAssistant.Automation;
@@ -24,97 +27,84 @@ public static class AutomationRunner
         List<string> days = prefs.SelectedDays;
         List<string> desks = prefs.SelectedDesksInPriority;
 
+        //MessageBox.Show(string.Join("\n", desks), "Selected Desks", MessageBoxButton.OK, MessageBoxImage.Information);
+
+
         // Initialize Playwright
         var playwright = await Playwright.CreateAsync();
         var browser = await playwright.Chromium.LaunchAsync(new BrowserTypeLaunchOptions { Headless = false });
         var page = await browser.NewPageAsync();
-        Console.WriteLine("Opened Chrome browser.");
 
         // Navigate to Condeco website
         await page.GotoAsync("https://hoopp.condecosoftware.com");
-        Console.WriteLine("Navigated to Condeco login page.");
 
-        await Locators_Condeco.EmailField(page).WaitForAsync();
-        await Locators_Condeco.EmailField(page).ClickAsync();
-        await Locators_Condeco.EmailField(page).FillAsync(username);
-        Console.WriteLine("Entered email address.");
-        await Locators_Condeco.SignInPageNextButton(page).ClickAsync();
-        Console.WriteLine("Clicked on 'Next' button.");
+        // Sign in page - email
+        await Locators.EmailField(page).WaitForAsync();
+        await Locators.EmailField(page).ClickAsync();
+        await Locators.EmailField(page).FillAsync(username);
+        await Locators.SignInPageNextButton(page).ClickAsync();
+        // Sign in page - password
+        await Locators.PasswordField(page).WaitForAsync();
+        await Locators.PasswordField(page).ClickAsync();
+        await Locators.PasswordField(page).FillAsync(password);
+        await Locators.SignInPage_SignInButton(page).ClickAsync();
 
-        await Locators_Condeco.PasswordField(page).WaitForAsync();
-        await Locators_Condeco.PasswordField(page).ClickAsync();
-        await Locators_Condeco.PasswordField(page).FillAsync(password);
-        Console.WriteLine("Entered password.");
+        // Selecting booking dates
+        var bookingDateLocators = Locators.BookingDates(page);
+        var deskLocators = Locators.Desks(page);
 
-        await Locators_Condeco.SignInPage_SignInButton(page).ClickAsync();
-        Console.WriteLine("Clicked on 'Sign in' button.");
-
-        await Locators_Condeco.PersonalSpacesButton(page).ClickAsync();
-        Console.WriteLine("Clicked on 'Personal Spaces' button.");
-
-        await Locators_Condeco.BookAPersonalSpaceButton(page).ClickAsync();
-        Console.WriteLine("Clicked on 'Book a Personal Space' button.");
-
-        await Locators_Condeco.CountryDropdown(page).ClickAsync();
-        Console.WriteLine("Clicked on 'Country' dropdown.");
-
-        await Locators_Condeco.LocationDropdown(page).ClickAsync();
-        Console.WriteLine("Clicked on 'Location' dropdown.");
-
-        await Locators_Condeco.GroupDropdown(page).ClickAsync();
-        Console.WriteLine("Clicked on 'Group' dropdown.");
-
-        await Locators_Condeco.FloorDropdown(page).ClickAsync();
-        Console.WriteLine("Clicked on 'Floor' dropdown.");
-
-        await Locators_Condeco.WorkspaceTypeDropdown(page).ClickAsync();
-        Console.WriteLine("Clicked on 'Workspace Type' dropdown.");
-        await page.PauseAsync();
-
-        try
+        foreach (var dateLocator in bookingDateLocators)
         {
-            if (Locators_Condeco.BookingDates(page)[0] != null)
+            try
             {
-                await Locators_Condeco.BookingDates(page)[0].ClickAsync();
+                // Always reset to home page
+                await Locators.HomePageButton(page).ClickAsync();
+                // Home page left side navigation menu
+                await Locators.PersonalSpacesButton(page).ClickAsync();
+                await Locators.BookAPersonalSpaceButton(page).ClickAsync();
+                // Book a personal space page
+                await Locators.CountryDropdown(page).ClickAsync();
+                await Locators.LocationDropdown(page).ClickAsync();
+                await Locators.GroupDropdown(page).ClickAsync();
+                await Locators.FloorDropdown(page).ClickAsync();
+                await Locators.WorkspaceTypeDropdown(page).ClickAsync();
+                // Select booking date
+                await dateLocator.ClickAsync();
+                await page.PauseAsync();
+                // Search for desks
+                await Locators.SearchButton(page).ClickAsync();
+                bool deskBooked = false;
+                foreach (var deskLocator in deskLocators)
+                {
+                    try
+                    {
+                        //Clipboard.SetText(string.Join("\n", deskLocator));
+                        //MessageBox.Show(string.Join("\n", deskLocator), "Selected Desks", MessageBoxButton.OK, MessageBoxImage.Information);
+                        // test to see if the desklocator hardcode works
+                        //await Locators.TestLocator(page).ClickAsync();
+                        await deskLocator.WaitForAsync(new LocatorWaitForOptions() {  Timeout = 3000 });
+                        await deskLocator.ClickAsync();
+                        await Locators.BookDeskButton(page).ClickAsync();
+                        await Locators.OKButton(page).ClickAsync();
+                        deskBooked = true;
+                        break;
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"Desks not available, trying next.");
+                    }
+                }
+                if (!deskBooked)
+                {
+                    Console.WriteLine($"No desks available for {dateLocator}.");
+                }
+                await page.WaitForTimeoutAsync(2000);
             }
-            if(Locators_Condeco.BookingDates(page)[1] != null)
+            catch (Exception ex)
             {
-                await Locators_Condeco.BookingDates(page)[1].ClickAsync();
-            }
-            if (Locators_Condeco.BookingDates(page)[2] != null)
-            {
-                await Locators_Condeco.BookingDates(page)[2].ClickAsync();
+                Console.WriteLine($"Error selecting booking date: {ex.Message}");
             }
         }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Error selecting booking dates: {ex.Message}");
-        }
-
-        await page.PauseAsync();
-
-        //await Locators.BookingDateTwo(page).ClickAsync();
-        //Console.WriteLine("Selected 'Booking Date Two'.");
-
-        //await Locators.BookingDateThree(page).ClickAsync();
-        //Console.WriteLine("Selected 'Booking Date Three'.");
-
-        await Locators_Condeco.SearchButton(page).ClickAsync();
-        Console.WriteLine("Clicked on 'Search' button.");
-        await page.PauseAsync();
-
-        await Locators_Desks.W103(page).ClickAsync();
-        Console.WriteLine("Clicked on 'W103' desk.");
-        await page.PauseAsync();
-
-        await Locators_Desks.BookDeskButton(page).ClickAsync();
-        Console.WriteLine("Booked the desk.");
-        await page.PauseAsync();
-
-        await Locators_Desks.OKButton(page).ClickAsync();
-        Console.WriteLine("Clicked on 'OK' button.");
-        await page.PauseAsync();
-
         await browser.CloseAsync();
     }
 }
