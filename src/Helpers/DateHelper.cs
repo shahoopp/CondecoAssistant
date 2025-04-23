@@ -8,41 +8,43 @@ namespace CondecoAssistant.Helpers;
 
 public static class DateHelper
 {
-    public static List<int> GetBookingDayNumbersFromPreferences()
+    public static List<string> GetBookingDateStringFromPreferences()
     {
         var prefs = PreferencesStorage.Load();
+        var selectedDays = prefs.SelectedDays;
 
-        if (prefs.SelectedDays == null || prefs.SelectedDays.Count == 0)
+        var twoWeeksFromToday = DateTime.Today.AddDays(7);
+        int daysToMonday = ((int)DayOfWeek.Monday - (int)twoWeeksFromToday.DayOfWeek + 7) % 7;
+        var bookingWeekStart = twoWeeksFromToday.AddDays(daysToMonday);
+
+        var result = new List<string>();
+
+        foreach (var day in selectedDays)
         {
-            return new List<int>();
-        }
-
-        DateTime today = DateTime.Today;
-
-        int daysUntilNextWednesday = ((int)DayOfWeek.Wednesday - (int)today.DayOfWeek + 7) % 7;
-        DateTime bookingReferenceWednesday = today.AddDays(daysUntilNextWednesday);
-
-        DateTime bookingWeekStart = bookingReferenceWednesday.AddDays(6 - (int)DayOfWeek.Monday);
-
-        var weekDates = new Dictionary<string, DateTime>
-        {
-            { "Monday", bookingWeekStart },
-            { "Tuesday", bookingWeekStart.AddDays(1) },
-            { "Wednesday", bookingWeekStart.AddDays(2) },
-            { "Thursday", bookingWeekStart.AddDays(3) },
-            { "Friday", bookingWeekStart.AddDays(4) }
-        };
-
-        var selectedDayNumbers = new List<int>();
-
-        foreach (var day in prefs.SelectedDays)
-        {
-            if (weekDates.ContainsKey(day))
+            var bookingDate = bookingWeekStart;
+            switch(day)
             {
-                selectedDayNumbers.Add(weekDates[day].Day);
+                case "Monday":
+                    bookingDate = bookingWeekStart;
+                    break;
+                case "Tuesday":
+                    bookingDate = bookingWeekStart.AddDays(1);
+                    break;
+                case "Wednesday":
+                    bookingDate = bookingWeekStart.AddDays(2);
+                    break;
+                case "Thursday":
+                    bookingDate = bookingWeekStart.AddDays(3);
+                    break;
+                case "Friday":
+                    bookingDate = bookingWeekStart.AddDays(4);
+                    break;
+                default:
+                    continue; // Skip invalid days
             }
+            string formatted = $"{bookingDate:dddd} {bookingDate.Day} {bookingDate:MMMM} {bookingDate.Year} is available for booking";
+            result.Add(formatted);
         }
-
-        return selectedDayNumbers;
+        return result;
     }
 }

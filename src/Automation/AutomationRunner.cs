@@ -25,15 +25,18 @@ public static class AutomationRunner
         }
 
         List<string> days = prefs.SelectedDays;
+
         List<string> desks = prefs.SelectedDesksInPriority;
-
-        //MessageBox.Show(string.Join("\n", desks), "Selected Desks", MessageBoxButton.OK, MessageBoxImage.Information);
-
+        //MessageBox.Show(string.Join("\n", desks), "Booking desks", MessageBoxButton.OK, MessageBoxImage.Information);
 
         // Initialize Playwright
         var playwright = await Playwright.CreateAsync();
         var browser = await playwright.Chromium.LaunchAsync(new BrowserTypeLaunchOptions { Headless = false });
         var page = await browser.NewPageAsync();
+
+        List<ILocator> dates = Locators.BookingDates(page);
+
+        //MessageBox.Show(string.Join("\n", dates), "Booking dates", MessageBoxButton.OK, MessageBoxImage.Information);
 
         // Navigate to Condeco website
         await page.GotoAsync("https://hoopp.condecosoftware.com");
@@ -52,7 +55,7 @@ public static class AutomationRunner
         // Selecting booking dates
         var bookingDateLocators = Locators.BookingDates(page);
         var deskLocators = Locators.Desks(page);
-
+        // loop through each date and try to book a desk
         foreach (var dateLocator in bookingDateLocators)
         {
             try
@@ -71,34 +74,33 @@ public static class AutomationRunner
                 // Select booking date
                 await dateLocator.ClickAsync();
                 await page.PauseAsync();
-                // Search for desks
+                // Search for desks on selected date
                 await Locators.SearchButton(page).ClickAsync();
                 bool deskBooked = false;
+                // loop through each desk and check for availability
                 foreach (var deskLocator in deskLocators)
                 {
                     try
                     {
-                        //Clipboard.SetText(string.Join("\n", deskLocator));
-                        //MessageBox.Show(string.Join("\n", deskLocator), "Selected Desks", MessageBoxButton.OK, MessageBoxImage.Information);
-                        // test to see if the desklocator hardcode works
-                        //await Locators.TestLocator(page).ClickAsync();
                         await deskLocator.WaitForAsync(new LocatorWaitForOptions() {  Timeout = 3000 });
                         await deskLocator.ClickAsync();
                         await Locators.BookDeskButton(page).ClickAsync();
                         await Locators.OKButton(page).ClickAsync();
                         deskBooked = true;
+                        await page.PauseAsync();
                         break;
                     }
-                    catch (Exception ex)
+                    // if the desk in priority is not found, continue to the next desk in the list
+                    catch (Exception)
                     {
+                        await page.PauseAsync();
                         Console.WriteLine($"Desks not available, trying next.");
                     }
                 }
                 if (!deskBooked)
                 {
-                    Console.WriteLine($"No desks available for {dateLocator}.");
+                    Console.WriteLine($"Desk already booked on {dateLocator} date.");
                 }
-                await page.WaitForTimeoutAsync(2000);
             }
             catch (Exception ex)
             {

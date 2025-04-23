@@ -27,14 +27,14 @@ public partial class DesksPage : Page
 
         deskButtons = new List<ToggleButton>
         {
-            DeskW100,
-            DeskW101,
-            DeskW102,
-            DeskW103,
-            DeskW104,
-            DeskW105,
-            DeskW106,
-            DeskW107
+            W100,
+            W101,
+            W102,
+            W103,
+            W104,
+            W105,
+            W106,
+            W107
         };
 
         LoadSavedDesks();
@@ -49,10 +49,7 @@ public partial class DesksPage : Page
     private void SaveDeskSelections()
     {
         var prefs = PreferencesStorage.Load();
-        prefs.SelectedDesksInPriority = selectedDesks
-            .Select(b => b.Content.ToString()
-            .Split('\n')[0])
-            .ToList();
+        prefs.SelectedDesksInPriority = selectedDesks.Select(b => b.Name).ToList();
         PreferencesStorage.Save(prefs);
     }
 
@@ -81,8 +78,7 @@ public partial class DesksPage : Page
         var prefs = PreferencesStorage.Load();
         foreach (var desk in deskButtons)
         {
-            string deskName = desk.Content.ToString();
-            if (prefs.SelectedDesksInPriority.Contains(deskName))
+            if (prefs.SelectedDesksInPriority.Contains(desk.Name))
             {
                 desk.IsChecked = true;
                 selectedDesks.Add(desk);
@@ -99,14 +95,13 @@ public partial class DesksPage : Page
     {
         foreach (var desk in deskButtons)
         {
-            desk.Content = desk.Name.Replace("Desk", "16-");
+            desk.Content = $"16-{desk.Name}";
         }
 
         for(int i = 0; i < selectedDesks.Count; i++)
         {
             var button = selectedDesks[i];
-            string deskName = button.Name.Replace("Desk", "16-");
-            button.Content = $"{deskName}\n#{i + 1}";
+            button.Content = $"16-{button.Name}\n#{i + 1}";
         }
     }
 }

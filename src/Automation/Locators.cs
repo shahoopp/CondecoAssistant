@@ -1,6 +1,7 @@
 ﻿using Microsoft.Playwright;
 using CondecoAssistant.Helpers;
 using CondecoAssistant.Models;
+using System.Windows;
 
 namespace CondecoAssistant.Automation;
 public static class Locators
@@ -60,16 +61,16 @@ public static class Locators
 
     public static List<ILocator> BookingDates(IPage page)
     {
-        var days = DateHelper.GetBookingDayNumbersFromPreferences();
+        var dateStrings = DateHelper.GetBookingDateStringFromPreferences();
         var locators = new List<ILocator>();
-        foreach (var day in days)
+        foreach (var fullText in dateStrings)
         {
             locators.Add(page.FrameLocator("iframe[name=\"mainDisplayFrame\"]")
-                .GetByText(day.ToString(), new() { Exact = true }));
+                .GetByRole(AriaRole.Cell, new() { Name = fullText, Exact = true }).Locator("label"));
         }
         return locators;
     }
-    
+
     public static ILocator SearchButton(IPage page) =>
         page.FrameLocator("iframe[name=\"mainDisplayFrame\"]")
             .GetByRole(AriaRole.Button, new() { Name = "Search" });
@@ -82,9 +83,7 @@ public static class Locators
         var locators = new List<ILocator>();
         foreach (var desk in desks)
         {
-            string deskNumber = desk.Substring(3);
-            string deskName = $"-{deskNumber} }}Desk!!";
-
+            string deskName = $"-{desk} }}}}Desk!!";
             var locator = page
                 .FrameLocator("iframe[name=\"mainDisplayFrame\"]")
                 .FrameLocator("iframe[title=\"Floor plan view\"]")
@@ -94,11 +93,6 @@ public static class Locators
         }
         return locators;
     }
-
-    public static ILocator TestLocator(IPage page) =>
-        page.FrameLocator("iframe[name=\"mainDisplayFrame\"]")
-            .FrameLocator("iframe[title=\"Floor plan view\"]")
-            .GetByRole(AriaRole.Button, new() { Name = "-W102 }}Desk!!" });
 
     // Book desk button
     public static ILocator BookDeskButton(IPage page) =>

@@ -23,46 +23,45 @@
            ItemHeight="60">
 
             <ToggleButton 
-                x:Name="DeskW100"
+                x:Name="W100"
                 Content="16-W100"
                 Click="DeskToggle_Click"
                 Margin="10"/>
             <ToggleButton
-                x:Name="DeskW101"
+                x:Name="W101"
                 Content="16-W101"
                 Click="DeskToggle_Click"
                 Margin="10"/>
             <ToggleButton 
-                x:Name="DeskW102"
+                x:Name="W102"
                 Content="16-W102"
                 Click="DeskToggle_Click"
                 Margin="10"/>
             <ToggleButton 
-                x:Name="DeskW103"
+                x:Name="W103"
                 Content="16-W103"
                 Click="DeskToggle_Click"
                 Margin="10"/>
             <ToggleButton 
-                x:Name="DeskW104"
+                x:Name="W104"
                 Content="16-W104"
                 Click="DeskToggle_Click"
                 Margin="10"/>
             <ToggleButton 
-                x:Name="DeskW105"
+                x:Name="W105"
                 Content="16-W105"
                 Click="DeskToggle_Click"
                 Margin="10"/>
             <ToggleButton 
-                x:Name="DeskW106"
+                x:Name="W106"
                 Content="16-W106"
                 Click="DeskToggle_Click"
                 Margin="10"/>
             <ToggleButton 
-                x:Name="DeskW107"
+                x:Name="W107"
                 Content="16-W107"
                 Click="DeskToggle_Click"
                 Margin="10"/>
-
         </WrapPanel>
     </Grid>
 </Page>
