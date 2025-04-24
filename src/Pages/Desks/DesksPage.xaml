@@ -8,18 +8,33 @@
     <Grid Margin="20">
         <Button 
            Content="Back" 
-           HorizontalAlignment="Left" 
-           VerticalAlignment="Top" 
-           Margin="10,10,10,0" 
-           Width="75" 
-           Height="30" 
-           Click="BackButton_Click" />
+           FontSize="20"
+Background="#585958"
+Foreground="White"
+HorizontalAlignment="Left" 
+VerticalAlignment="Top" 
+Margin="10" 
+Width="75" 
+Height="30" 
+Click="BackButton_Click" />
+
+        <!-- Selected Desks Section -->
+        <WrapPanel 
+    x:Name="SelectedDesksPanel"
+    Width="500"
+    VerticalAlignment="Top"
+    HorizontalAlignment="Center"
+    Margin="0,60,0,0"
+    ItemWidth="125"
+    ItemHeight="40">
+        </WrapPanel>
 
         <WrapPanel 
+            Width="500"
            VerticalAlignment="Center" 
            HorizontalAlignment="Center" 
            Margin="0,40,0,0" 
-           ItemWidth="120"
+           ItemWidth="125"
            ItemHeight="60">
 
             <ToggleButton 

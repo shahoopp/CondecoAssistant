@@ -73,7 +73,6 @@ public static class AutomationRunner
                 await Locators.WorkspaceTypeDropdown(page).ClickAsync();
                 // Select booking date
                 await dateLocator.ClickAsync();
-                await page.PauseAsync();
                 // Search for desks on selected date
                 await Locators.SearchButton(page).ClickAsync();
                 bool deskBooked = false;
@@ -87,13 +86,11 @@ public static class AutomationRunner
                         await Locators.BookDeskButton(page).ClickAsync();
                         await Locators.OKButton(page).ClickAsync();
                         deskBooked = true;
-                        await page.PauseAsync();
                         break;
                     }
                     // if the desk in priority is not found, continue to the next desk in the list
                     catch (Exception)
                     {
-                        await page.PauseAsync();
                         Console.WriteLine($"Desks not available, trying next.");
                     }
                 }

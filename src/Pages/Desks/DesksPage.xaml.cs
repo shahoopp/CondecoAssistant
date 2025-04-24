@@ -44,6 +44,8 @@ public partial class DesksPage : Page
     {
         ((MainWindow)Application.Current.MainWindow).MainFrame.Navigate(new HomePage());
         ((MainWindow)Application.Current.MainWindow).HeaderText.Text = "Condeco Assistant";
+        ((MainWindow)Application.Current.MainWindow).AuthorText.Text = "by Shaheer Lone";
+
     }
 
     private void SaveDeskSelections()
@@ -51,6 +53,8 @@ public partial class DesksPage : Page
         var prefs = PreferencesStorage.Load();
         prefs.SelectedDesksInPriority = selectedDesks.Select(b => b.Name).ToList();
         PreferencesStorage.Save(prefs);
+
+        UpdateSelectedDesksPanel();
     }
 
     private void DeskToggle_Click(object sender, RoutedEventArgs e)
@@ -67,12 +71,15 @@ public partial class DesksPage : Page
             selectedDesks.Remove(button);
         }
 
+        if(selectedDesks.Count > 3)
+        {
+            ((ToggleButton)sender).IsChecked = false;
+            MessageBox.Show("You can only select up to 3 days.");
+            return;
+        }
+
         SaveDeskSelections();
-        UpdateDeskLabels();
     }
-
-
-
     private void LoadSavedDesks()
     {
         var prefs = PreferencesStorage.Load();
@@ -88,20 +95,27 @@ public partial class DesksPage : Page
                 desk.IsChecked = false;
             }
         }
-        UpdateDeskLabels();
+
+        UpdateSelectedDesksPanel();
     }
 
-    private void UpdateDeskLabels()
+    private void UpdateSelectedDesksPanel()
     {
-        foreach (var desk in deskButtons)
-        {
-            desk.Content = $"16-{desk.Name}";
-        }
+        SelectedDesksPanel.Children.Clear();
 
-        for(int i = 0; i < selectedDesks.Count; i++)
+        for (int i = 0; i < selectedDesks.Count; i++)
         {
-            var button = selectedDesks[i];
-            button.Content = $"16-{button.Name}\n#{i + 1}";
+            var label = new Label
+            {
+                Content = $"{selectedDesks[i].Content} (#{i + 1})",
+                Background = Brushes.LightGray,
+                Foreground = Brushes.Black,
+                Padding = new Thickness(5),
+                Margin = new Thickness(5),
+                FontWeight = FontWeights.Bold,
+                HorizontalAlignment = HorizontalAlignment.Center,
+                VerticalAlignment = VerticalAlignment.Center
+            };
         }
     }
 }

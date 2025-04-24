@@ -29,6 +29,8 @@ public partial class LoginPage : Page
     {
         ((MainWindow)Application.Current.MainWindow).MainFrame.Navigate(new HomePage());
         ((MainWindow)Application.Current.MainWindow).HeaderText.Text = "Condeco Assistant";
+        ((MainWindow)Application.Current.MainWindow).AuthorText.Text = "by Shaheer Lone";
+
     }
 
     private void SaveButton_Click(object sender, RoutedEventArgs e)

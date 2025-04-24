@@ -36,6 +36,8 @@ public partial class DaysPage : Page
     {
         ((MainWindow)Application.Current.MainWindow).MainFrame.Navigate(new HomePage());
         ((MainWindow)Application.Current.MainWindow).HeaderText.Text = "Condeco Assistant";
+        ((MainWindow)Application.Current.MainWindow).AuthorText.Text = "by Shaheer Lone";
+
     }
 
     private void DayToggle_Click(object sender, RoutedEventArgs e)

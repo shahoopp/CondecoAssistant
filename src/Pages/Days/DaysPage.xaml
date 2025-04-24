@@ -8,12 +8,15 @@
     <Grid Margin="20">
         <Button 
            Content="Back" 
-           HorizontalAlignment="Left" 
-           VerticalAlignment="Top" 
-           Margin="10,10,10,0" 
-           Width="75" 
-           Height="30" 
-           Click="BackButton_Click" />
+           FontSize="20"
+Background="#585958"
+Foreground="White"
+HorizontalAlignment="Left" 
+VerticalAlignment="Top" 
+Margin="10" 
+Width="75" 
+Height="30" 
+Click="BackButton_Click" />
 
         <WrapPanel 
            VerticalAlignment="Center" 
