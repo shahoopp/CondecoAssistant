@@ -1,4 +1,4 @@
-<Page x:Class="CondecoAssistant.Pages.Information.InformationPage"
+﻿<Page x:Class="CondecoAssistant.Pages.Information.InformationPage"
   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
   xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -8,19 +8,19 @@
   mc:Ignorable="d">
  <Grid>
      <!-- Back Button -->
-     <Button 
-          Content="Back" 
-          FontSize="20"
-        Background="#585958"
-        Foreground="White"
-        HorizontalAlignment="Left" 
-        VerticalAlignment="Top" 
-        Margin="10" 
-        Width="75" 
-        Height="30" 
-        Click="BackButton_Click" />
+        <Button 
+           Content="←" 
+           FontSize="20"
+Background="#585958"
+Foreground="White"
+HorizontalAlignment="Left" 
+VerticalAlignment="Top" 
+Margin="10" 
+Width="50" 
+Height="30" 
+Click="BackButton_Click" />
 
-     <!-- Centered Content Grid -->
+        <!-- Centered Content Grid -->
      <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
          <Grid.ColumnDefinitions>
              <ColumnDefinition Width="1*" />

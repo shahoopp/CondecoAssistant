@@ -6,19 +6,19 @@
     xmlns:local="clr-namespace:CondecoAssistant"
     Background="White">
   <Grid>
-      <Button 
-          Content="Back" 
-          FontSize="20"
-          Background="#585958"
-          Foreground="White"
-          HorizontalAlignment="Left" 
-          VerticalAlignment="Top" 
-          Margin="10" 
-          Width="75" 
-          Height="30" 
-          Click="BackButton_Click" />
+        <Button 
+           Content="←" 
+           FontSize="20"
+Background="#585958"
+Foreground="White"
+HorizontalAlignment="Left" 
+VerticalAlignment="Top" 
+Margin="10" 
+Width="50" 
+Height="30" 
+Click="BackButton_Click" />
 
-      <StackPanel 
+        <StackPanel 
           VerticalAlignment="Top" 
           HorizontalAlignment="Center" 
           Margin="0,50,0,0" 

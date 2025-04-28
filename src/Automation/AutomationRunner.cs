@@ -27,7 +27,6 @@ public static class AutomationRunner
         List<string> days = prefs.SelectedDays;
 
         List<string> desks = prefs.SelectedDesksInPriority;
-        //MessageBox.Show(string.Join("\n", desks), "Booking desks", MessageBoxButton.OK, MessageBoxImage.Information);
 
         // Initialize Playwright
         var playwright = await Playwright.CreateAsync();

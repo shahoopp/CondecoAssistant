@@ -25,7 +25,7 @@
            HorizontalAlignment="Left" 
            VerticalAlignment="Top" 
            Margin="10" 
-           Width="75" 
+           Width="50" 
            Height="30" 
            Click="BackButton_Click" />
 
