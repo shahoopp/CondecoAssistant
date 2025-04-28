@@ -103,7 +103,6 @@ public partial class HomePage : Page
         try
         {
             await CondecoAssistant.Automation.AutomationRunner.RunAsync();
-            MessageBox.Show("Automation completed successfully.", "Done", MessageBoxButton.OK, MessageBoxImage.Information);
         }
         catch (Exception ex)
         {
