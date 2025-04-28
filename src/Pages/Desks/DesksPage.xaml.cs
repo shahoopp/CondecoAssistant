@@ -99,12 +99,18 @@ public partial class DesksPage : Page
         Priority2.Text = string.Empty;
         Priority3.Text = string.Empty;
 
-        // Update the priority display based on selected desks
-        if (selectedDesks.Count > 0)
-            Priority1.Text = selectedDesks.ElementAtOrDefault(0)?.Name ?? string.Empty;
-        if (selectedDesks.Count > 1)
-            Priority2.Text = selectedDesks.ElementAtOrDefault(1)?.Name ?? string.Empty;
-        if (selectedDesks.Count > 2)
-            Priority3.Text = selectedDesks.ElementAtOrDefault(2)?.Name ?? string.Empty;
+        // Ensure the selectedDesks list is ordered by the order of selection
+        var orderedSelectedDesks = PreferencesStorage.Load().SelectedDesksInPriority
+            .Select(name => selectedDesks.FirstOrDefault(d => d.Name == name))
+            .Where(d => d != null)
+            .ToList();
+
+        // Update the priority display based on the ordered selected desks
+        if (orderedSelectedDesks.Count > 0)
+            Priority1.Text = orderedSelectedDesks.ElementAtOrDefault(0)?.Name ?? string.Empty;
+        if (orderedSelectedDesks.Count > 1)
+            Priority2.Text = orderedSelectedDesks.ElementAtOrDefault(1)?.Name ?? string.Empty;
+        if (orderedSelectedDesks.Count > 2)
+            Priority3.Text = orderedSelectedDesks.ElementAtOrDefault(2)?.Name ?? string.Empty;
     }
 }
