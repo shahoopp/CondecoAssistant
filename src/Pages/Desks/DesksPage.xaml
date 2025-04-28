@@ -1,82 +1,109 @@
 <Page x:Class="CondecoAssistant.Pages.Desks.DesksPage"
-     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-     xmlns:local="clr-namespace:CondecoAssistant"
-     Background="White">
-    <Grid Margin="20">
-        <Button 
-           Content="Back" 
-           FontSize="20"
-Background="#585958"
-Foreground="White"
-HorizontalAlignment="Left" 
-VerticalAlignment="Top" 
-Margin="10" 
-Width="75" 
-Height="30" 
-Click="BackButton_Click" />
+xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+xmlns:local="clr-namespace:CondecoAssistant"
+Background="White">
+<Grid>
+  <Button 
+     Content="Back" 
+     FontSize="20"
+     Background="#585958"
+     Foreground="White"
+     HorizontalAlignment="Left" 
+     VerticalAlignment="Top" 
+     Margin="10" 
+     Width="75" 
+     Height="30" 
+     Click="BackButton_Click" />
 
-        <!-- Selected Desks Section -->
-        <WrapPanel 
-    x:Name="SelectedDesksPanel"
-    Width="500"
-    VerticalAlignment="Top"
-    HorizontalAlignment="Center"
-    Margin="0,60,0,0"
-    ItemWidth="125"
-    ItemHeight="40">
-        </WrapPanel>
-
-        <WrapPanel 
-            Width="500"
-           VerticalAlignment="Center" 
-           HorizontalAlignment="Center" 
-           Margin="0,40,0,0" 
-           ItemWidth="125"
-           ItemHeight="60">
-
-            <ToggleButton 
-                x:Name="W100"
-                Content="16-W100"
-                Click="DeskToggle_Click"
-                Margin="10"/>
-            <ToggleButton
-                x:Name="W101"
-                Content="16-W101"
-                Click="DeskToggle_Click"
-                Margin="10"/>
-            <ToggleButton 
-                x:Name="W102"
-                Content="16-W102"
-                Click="DeskToggle_Click"
-                Margin="10"/>
-            <ToggleButton 
-                x:Name="W103"
-                Content="16-W103"
-                Click="DeskToggle_Click"
-                Margin="10"/>
-            <ToggleButton 
-                x:Name="W104"
-                Content="16-W104"
-                Click="DeskToggle_Click"
-                Margin="10"/>
-            <ToggleButton 
-                x:Name="W105"
-                Content="16-W105"
-                Click="DeskToggle_Click"
-                Margin="10"/>
-            <ToggleButton 
-                x:Name="W106"
-                Content="16-W106"
-                Click="DeskToggle_Click"
-                Margin="10"/>
-            <ToggleButton 
-                x:Name="W107"
-                Content="16-W107"
-                Click="DeskToggle_Click"
-                Margin="10"/>
-        </WrapPanel>
-    </Grid>
+  <!-- Desk Booking Priority Section -->
+  <StackPanel VerticalAlignment="Top" HorizontalAlignment="Center" Margin="0,30,0,20">
+      <TextBlock Text="Desk Booking Priority" FontSize="20" FontWeight="Bold" HorizontalAlignment="Center" Margin="0,0,0,10"/>
+      <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+          <Border Width="100" Height="50" BorderBrush="Gray" BorderThickness="2" CornerRadius="5">
+              <StackPanel>
+                  <TextBlock Text="#1" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,5,0,0" FontWeight="Bold"/>
+                  <TextBlock x:Name="Priority1" Text="" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+              </StackPanel>
+          </Border>
+          <Border Width="100" Height="50" BorderBrush="Gray" BorderThickness="2" CornerRadius="5">
+              <StackPanel>
+                  <TextBlock Text="#2" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,5,0,0" FontWeight="Bold"/>
+                  <TextBlock x:Name="Priority2" Text="" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+              </StackPanel>
+          </Border>
+          <Border Width="100" Height="50" BorderBrush="Gray" BorderThickness="2" CornerRadius="5">
+              <StackPanel>
+                  <TextBlock Text="#3" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,5,0,0" FontWeight="Bold"/>
+                  <TextBlock x:Name="Priority3" Text="" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+              </StackPanel>
+          </Border>
+      </StackPanel>
+  </StackPanel>
+  <!-- Horizontal Scrollable Box for Desks -->
+  <ScrollViewer 
+      Width="615"
+      Height="180"
+      VerticalAlignment="Top" 
+      HorizontalAlignment="Center" 
+      Margin="0,150,0,0"
+      HorizontalScrollBarVisibility="Auto"
+      VerticalScrollBarVisibility="Disabled">
+      <StackPanel Orientation="Horizontal">
+          <StackPanel>
+              <ToggleButton x:Name="W103" Content="16-W103" Click="DeskToggle_Click" Margin="10"/>
+              <ToggleButton x:Name="W102" Content="16-W102" Click="DeskToggle_Click" Margin="10"/>
+              <ToggleButton x:Name="W101" Content="16-W101" Click="DeskToggle_Click" Margin="10"/>
+              <ToggleButton x:Name="W100" Content="16-W100" Click="DeskToggle_Click" Margin="10"/>
+          </StackPanel>
+          <StackPanel>
+              <ToggleButton x:Name="W104" Content="16-W104" Click="DeskToggle_Click" Margin="10"/>
+              <ToggleButton x:Name="W105" Content="16-W105" Click="DeskToggle_Click" Margin="10"/>
+              <ToggleButton x:Name="W106" Content="16-W106" Click="DeskToggle_Click" Margin="10"/>
+              <ToggleButton x:Name="W107" Content="16-W107" Click="DeskToggle_Click" Margin="10"/>
+          </StackPanel>
+          <Border Width="2" Background="Gray" Margin="5,0"/>
+          <StackPanel>
+              <ToggleButton x:Name="W111" Content="16-W111" Click="DeskToggle_Click" Margin="10"/>
+              <ToggleButton x:Name="W110" Content="16-W110" Click="DeskToggle_Click" Margin="10"/>
+              <ToggleButton x:Name="W109" Content="16-W109" Click="DeskToggle_Click" Margin="10"/>
+              <ToggleButton x:Name="W108" Content="16-W108" Click="DeskToggle_Click" Margin="10"/>
+          </StackPanel>
+          <StackPanel>
+              <ToggleButton x:Name="W112" Content="16-W112" Click="DeskToggle_Click" Margin="10"/>
+              <ToggleButton x:Name="W113" Content="16-W113" Click="DeskToggle_Click" Margin="10"/>
+              <ToggleButton x:Name="W114" Content="16-W114" Click="DeskToggle_Click" Margin="10"/>
+              <ToggleButton x:Name="W115" Content="16-W115" Click="DeskToggle_Click" Margin="10"/>
+          </StackPanel>
+          <Border Width="2" Background="Gray" Margin="5,0"/>
+          <StackPanel>
+              <ToggleButton x:Name="W119" Content="16-W119" Click="DeskToggle_Click" Margin="10"/>
+              <ToggleButton x:Name="W118" Content="16-W118" Click="DeskToggle_Click" Margin="10"/>
+              <ToggleButton x:Name="W117" Content="16-W117" Click="DeskToggle_Click" Margin="10"/>
+              <ToggleButton x:Name="W116" Content="16-W116" Click="DeskToggle_Click" Margin="10"/>
+          </StackPanel>
+          <StackPanel>
+              <ToggleButton x:Name="W200" Content="16-W200" Click="DeskToggle_Click" Margin="10"/>
+              <ToggleButton x:Name="W201" Content="16-W201" Click="DeskToggle_Click" Margin="10"/>
+              <ToggleButton x:Name="W202" Content="16-W202" Click="DeskToggle_Click" Margin="10"/>
+              <ToggleButton x:Name="W203" Content="16-W203" Click="DeskToggle_Click" Margin="10"/>
+          </StackPanel>
+          <Border Width="2" Background="Gray" Margin="5,0"/>
+          <StackPanel>
+              <ToggleButton x:Name="W206" Content="16-W206" Click="DeskToggle_Click" Margin="10"/>
+              <ToggleButton x:Name="W205" Content="16-W205" Click="DeskToggle_Click" Margin="10"/>
+              <ToggleButton x:Name="INVISIBLE" Content="" Margin="10"/>
+              <ToggleButton x:Name="W204" Content="16-W204" Click="DeskToggle_Click" Margin="10"/>
+          </StackPanel>
+          <StackPanel>
+              <ToggleButton x:Name="W207" Content="16-W207" Click="DeskToggle_Click" Margin="10"/>
+              <ToggleButton x:Name="W208" Content="16-W208" Click="DeskToggle_Click" Margin="10"/>
+              <ToggleButton x:Name="W209" Content="16-W209" Click="DeskToggle_Click" Margin="10"/>
+              <ToggleButton x:Name="W210" Content="16-W210" Click="DeskToggle_Click" Margin="10"/>
+          </StackPanel>
+      </StackPanel>
+  </ScrollViewer>
+</Grid>
 </Page>

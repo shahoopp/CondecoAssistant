@@ -27,14 +27,9 @@ public partial class DesksPage : Page
 
         deskButtons = new List<ToggleButton>
         {
-            W100,
-            W101,
-            W102,
-            W103,
-            W104,
-            W105,
-            W106,
-            W107
+            W100, W101, W102, W103, W104, W105, W106, W107, W108, W109,
+            W110, W111, W112, W113, W114, W115, W116, W117, W118, W119,
+            W200, W201, W202, W203, W204, W205, W206, W207, W208, W209, W210
         };
 
         LoadSavedDesks();
@@ -45,7 +40,6 @@ public partial class DesksPage : Page
         ((MainWindow)Application.Current.MainWindow).MainFrame.Navigate(new HomePage());
         ((MainWindow)Application.Current.MainWindow).HeaderText.Text = "Condeco Assistant";
         ((MainWindow)Application.Current.MainWindow).AuthorText.Text = "by Shaheer Lone";
-
     }
 
     private void SaveDeskSelections()
@@ -53,8 +47,6 @@ public partial class DesksPage : Page
         var prefs = PreferencesStorage.Load();
         prefs.SelectedDesksInPriority = selectedDesks.Select(b => b.Name).ToList();
         PreferencesStorage.Save(prefs);
-
-        UpdateSelectedDesksPanel();
     }
 
     private void DeskToggle_Click(object sender, RoutedEventArgs e)
@@ -63,23 +55,24 @@ public partial class DesksPage : Page
 
         if (button.IsChecked == true && !selectedDesks.Contains(button))
         {
-            if(button != null)
-                selectedDesks.Add(button);
+            selectedDesks.Add(button);
         }
         else if (button.IsChecked == false)
         {
             selectedDesks.Remove(button);
         }
 
-        if(selectedDesks.Count > 3)
+        if (selectedDesks.Count > 3)
         {
-            ((ToggleButton)sender).IsChecked = false;
-            MessageBox.Show("You can only select up to 3 days.");
+            button.IsChecked = false;
+            MessageBox.Show("You can only select up to 3 desks.");
             return;
         }
 
         SaveDeskSelections();
+        UpdateDeskPriorityDisplay(); // Update the priority display
     }
+
     private void LoadSavedDesks()
     {
         var prefs = PreferencesStorage.Load();
@@ -96,26 +89,22 @@ public partial class DesksPage : Page
             }
         }
 
-        UpdateSelectedDesksPanel();
+        UpdateDeskPriorityDisplay(); // Update the priority display
     }
 
-    private void UpdateSelectedDesksPanel()
+    private void UpdateDeskPriorityDisplay()
     {
-        SelectedDesksPanel.Children.Clear();
+        // Clear the priority display
+        Priority1.Text = string.Empty;
+        Priority2.Text = string.Empty;
+        Priority3.Text = string.Empty;
 
-        for (int i = 0; i < selectedDesks.Count; i++)
-        {
-            var label = new Label
-            {
-                Content = $"{selectedDesks[i].Content} (#{i + 1})",
-                Background = Brushes.LightGray,
-                Foreground = Brushes.Black,
-                Padding = new Thickness(5),
-                Margin = new Thickness(5),
-                FontWeight = FontWeights.Bold,
-                HorizontalAlignment = HorizontalAlignment.Center,
-                VerticalAlignment = VerticalAlignment.Center
-            };
-        }
+        // Update the priority display based on selected desks
+        if (selectedDesks.Count > 0)
+            Priority1.Text = selectedDesks.ElementAtOrDefault(0)?.Name ?? string.Empty;
+        if (selectedDesks.Count > 1)
+            Priority2.Text = selectedDesks.ElementAtOrDefault(1)?.Name ?? string.Empty;
+        if (selectedDesks.Count > 2)
+            Priority3.Text = selectedDesks.ElementAtOrDefault(2)?.Name ?? string.Empty;
     }
 }
