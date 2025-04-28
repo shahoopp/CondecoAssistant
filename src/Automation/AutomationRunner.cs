@@ -24,17 +24,18 @@ public static class AutomationRunner
             return;
         }
 
-        List<string> days = prefs.SelectedDays;
+        //List<string> days = prefs.SelectedDays;
+        //MessageBox.Show(string.Join("\n", days), "Booking days", MessageBoxButton.OK, MessageBoxImage.Information);
 
-        List<string> desks = prefs.SelectedDesksInPriority;
+        //List<string> desks = prefs.SelectedDesksInPriority;
+        //MessageBox.Show(string.Join("\n", desks), "Booking desks", MessageBoxButton.OK, MessageBoxImage.Information);
 
         // Initialize Playwright
         var playwright = await Playwright.CreateAsync();
         var browser = await playwright.Chromium.LaunchAsync(new BrowserTypeLaunchOptions { Headless = false });
         var page = await browser.NewPageAsync();
 
-        List<ILocator> dates = Locators.BookingDates(page);
-
+        //List<ILocator> dates = Locators.BookingDates(page);
         //MessageBox.Show(string.Join("\n", dates), "Booking dates", MessageBoxButton.OK, MessageBoxImage.Information);
 
         // Navigate to Condeco website
@@ -59,18 +60,18 @@ public static class AutomationRunner
         {
             try
             {
-                // Always reset to home page
+                // Always start the booking from the home page
                 await Locators.HomePageButton(page).ClickAsync();
                 // Home page left side navigation menu
                 await Locators.PersonalSpacesButton(page).ClickAsync();
                 await Locators.BookAPersonalSpaceButton(page).ClickAsync();
-                // Book a personal space page
+                // Book a personal space page - confirm selections
                 await Locators.CountryDropdown(page).ClickAsync();
                 await Locators.LocationDropdown(page).ClickAsync();
                 await Locators.GroupDropdown(page).ClickAsync();
                 await Locators.FloorDropdown(page).ClickAsync();
                 await Locators.WorkspaceTypeDropdown(page).ClickAsync();
-                // Select booking date
+                // Select booking date from the calendar
                 await dateLocator.ClickAsync();
                 // Search for desks on selected date
                 await Locators.SearchButton(page).ClickAsync();
@@ -80,11 +81,14 @@ public static class AutomationRunner
                 {
                     try
                     {
+                        // wait for the desk locator to be available
                         await deskLocator.WaitForAsync(new LocatorWaitForOptions() {  Timeout = 3000 });
+                        // click on the desk locator
                         await deskLocator.ClickAsync();
                         await Locators.BookDeskButton(page).ClickAsync();
                         await Locators.OKButton(page).ClickAsync();
                         deskBooked = true;
+                        // break out of loop and move onto the next date for booking
                         break;
                     }
                     // if the desk in priority is not found, continue to the next desk in the list
