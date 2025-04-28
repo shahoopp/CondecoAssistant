@@ -27,7 +27,7 @@ public partial class DesksPage : Page
 
         deskButtons = new List<ToggleButton>
         {
-            W100, W101, W102, W103, W104, W105, W106, W107, W108, W109,
+            W100, W101, W107, W108, W109,
             W110, W111, W112, W113, W114, W115, W116, W117, W118, W119,
             W200, W201, W202, W203, W204, W205, W206, W207, W208, W209, W210
         };

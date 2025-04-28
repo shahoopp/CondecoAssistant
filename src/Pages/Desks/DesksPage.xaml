@@ -53,15 +53,15 @@ Click="BackButton_Click" />
       VerticalScrollBarVisibility="Disabled">
       <StackPanel Orientation="Horizontal">
           <StackPanel>
-              <ToggleButton x:Name="W103" Content="16-W103" Click="DeskToggle_Click" Margin="10"/>
-              <ToggleButton x:Name="W102" Content="16-W102" Click="DeskToggle_Click" Margin="10"/>
+                    <Button x:Name="W103" Content ="" Margin="10"/>
+                    <Button x:Name="W102" Content ="" Margin="10" />
               <ToggleButton x:Name="W101" Content="16-W101" Click="DeskToggle_Click" Margin="10"/>
               <ToggleButton x:Name="W100" Content="16-W100" Click="DeskToggle_Click" Margin="10"/>
           </StackPanel>
           <StackPanel>
-              <ToggleButton x:Name="W104" Content="16-W104" Click="DeskToggle_Click" Margin="10"/>
-              <ToggleButton x:Name="W105" Content="16-W105" Click="DeskToggle_Click" Margin="10"/>
-              <ToggleButton x:Name="W106" Content="16-W106" Click="DeskToggle_Click" Margin="10"/>
+              <Button x:Name="W104" Content="" Margin="10"/>
+              <Button x:Name="W105" Content="" Margin="10"/>
+              <Button x:Name="W106" Content="" Margin="10"/>
               <ToggleButton x:Name="W107" Content="16-W107" Click="DeskToggle_Click" Margin="10"/>
           </StackPanel>
           <Border Width="2" Background="Gray" Margin="5,0"/>
@@ -94,7 +94,7 @@ Click="BackButton_Click" />
           <StackPanel>
               <ToggleButton x:Name="W206" Content="16-W206" Click="DeskToggle_Click" Margin="10"/>
               <ToggleButton x:Name="W205" Content="16-W205" Click="DeskToggle_Click" Margin="10"/>
-              <Button x:Name="INVISIBLE" Content="" Margin="10"/>
+              <Button x:Name="PILLAR" Content="" Margin="10"/>
               <ToggleButton x:Name="W204" Content="16-W204" Click="DeskToggle_Click" Margin="10"/>
           </StackPanel>
           <StackPanel>
@@ -105,5 +105,12 @@ Click="BackButton_Click" />
           </StackPanel>
       </StackPanel>
   </ScrollViewer>
-</Grid>
+        <TextBlock 
+        x:Name="N" 
+        Text="North Side" 
+        FontSize="20" 
+        HorizontalAlignment="Center" 
+        VerticalAlignment="Top" 
+        Margin="0,340,0,0"/>
+    </Grid>
 </Page>
