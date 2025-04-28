@@ -94,6 +94,23 @@ public static class Locators
         return locators;
     }
 
+    public static List<ILocator> RemainingDesks(IPage page)
+    {
+        var prefs = PreferencesStorage.Load();
+        var desks = prefs.RemainingDesks;
+        var locators = new List<ILocator>();
+        foreach (var desk in desks)
+        {
+            string deskName = $"-{desk} }}}}Desk!!";
+            var locator = page
+                .FrameLocator("iframe[name=\"mainDisplayFrame\"]")
+                .FrameLocator("iframe[title=\"Floor plan view\"]")
+                .GetByRole(AriaRole.Button, new() { Name = deskName });
+            locators.Add(locator);
+        }
+        return locators;
+    }
+
     // Book desk button
     public static ILocator BookDeskButton(IPage page) =>
         page.FrameLocator("iframe[name=\"mainDisplayFrame\"]")

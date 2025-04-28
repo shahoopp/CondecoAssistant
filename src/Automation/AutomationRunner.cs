@@ -55,6 +55,7 @@ public static class AutomationRunner
         // Selecting booking dates
         var bookingDateLocators = Locators.BookingDates(page);
         var deskLocators = Locators.Desks(page);
+        var remainingDeskLocators = Locators.RemainingDesks(page);
         // loop through each date and try to book a desk
         foreach (var dateLocator in bookingDateLocators)
         {
@@ -82,7 +83,7 @@ public static class AutomationRunner
                     try
                     {
                         // wait for the desk locator to be available
-                        await deskLocator.WaitForAsync(new LocatorWaitForOptions() {  Timeout = 3000 });
+                        await deskLocator.WaitForAsync(new LocatorWaitForOptions() { Timeout = 3000 });
                         // click on the desk locator
                         await deskLocator.ClickAsync();
                         await Locators.BookDeskButton(page).ClickAsync();
@@ -99,7 +100,26 @@ public static class AutomationRunner
                 }
                 if (!deskBooked)
                 {
-                    Console.WriteLine($"Desk already booked on {dateLocator} date.");
+                    foreach (var remainingDesk in remainingDeskLocators)
+                    {
+                        try
+                        {
+                            // wait for the desk locator to be available
+                            await remainingDesk.WaitForAsync(new LocatorWaitForOptions() { Timeout = 3000 });
+                            // click on the desk locator
+                            await remainingDesk.ClickAsync();
+                            await Locators.BookDeskButton(page).ClickAsync();
+                            await Locators.OKButton(page).ClickAsync();
+                            deskBooked = true;
+                            // break out of loop and move onto the next date for booking
+                            break;
+                        }
+                        // if the desk in priority is not found, continue to the next desk in the list
+                        catch (Exception)
+                        {
+                            Console.WriteLine($"Desks not available, trying next.");
+                        }
+                    }
                 }
             }
             catch (Exception ex)

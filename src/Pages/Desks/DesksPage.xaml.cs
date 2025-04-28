@@ -21,11 +21,19 @@ public partial class DesksPage : Page
 {
     private readonly List<ToggleButton> deskButtons = new();
     private readonly List<ToggleButton> selectedDesks = new();
+    private readonly List<ToggleButton> remainingDesks = new();
     public DesksPage()
     {
         InitializeComponent();
 
         deskButtons = new List<ToggleButton>
+        {
+            W100, W101, W107, W108, W109,
+            W110, W111, W112, W113, W114, W115, W116, W117, W118, W119,
+            W200, W201, W202, W203, W204, W205, W206, W207, W208, W209, W210
+        };
+
+        remainingDesks = new List<ToggleButton>
         {
             W100, W101, W107, W108, W109,
             W110, W111, W112, W113, W114, W115, W116, W117, W118, W119,
@@ -46,6 +54,7 @@ public partial class DesksPage : Page
     {
         var prefs = PreferencesStorage.Load();
         prefs.SelectedDesksInPriority = selectedDesks.Select(b => b.Name).ToList();
+        prefs.RemainingDesks = remainingDesks.Select(b => b.Name).ToList();
         PreferencesStorage.Save(prefs);
     }
 
@@ -56,10 +65,12 @@ public partial class DesksPage : Page
         if (button.IsChecked == true && !selectedDesks.Contains(button))
         {
             selectedDesks.Add(button);
+            remainingDesks.Remove(button);
         }
         else if (button.IsChecked == false)
         {
             selectedDesks.Remove(button);
+            remainingDesks.Add(button);
         }
 
         if (selectedDesks.Count > 3)
@@ -82,10 +93,12 @@ public partial class DesksPage : Page
             {
                 desk.IsChecked = true;
                 selectedDesks.Add(desk);
+                remainingDesks.Remove(desk);
             }
             else
             {
                 desk.IsChecked = false;
+                remainingDesks.Add(desk);
             }
         }
 
