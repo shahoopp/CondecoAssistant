@@ -9,3 +9,7 @@ For some reason, WPF App (.Net Core) does not appear in the list of project temp
 ```cd C:\Projects\CondecoAssistant```
 ```dotnet new sln -n CondecoAssistant```
 ```dotnet sln add CondecoAssistant.csproj```
+
+```dotnet publish -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true```
+
+```cd src\bin\Release\net8.0-windows\win-x64\publisCondecoAssistant.exe```

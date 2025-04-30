@@ -23,54 +23,6 @@ public partial class HomePage : Page
     {
         InitializeComponent();
 
-        // Attach event handlers to InfoButtons
-        //InfoButton1.Click += (s, e) => ToggleVisibility(LoginInfoText, DaysInfoText, DesksInfoText);
-        //InfoButton2.Click += (s, e) => ToggleVisibility(DaysInfoText, LoginInfoText, DesksInfoText);
-        //InfoButton3.Click += (s, e) => ToggleVisibility(DesksInfoText, LoginInfoText, DaysInfoText);
-    }
-
-    private void ToggleVisibility(TextBlock showText, TextBlock hideText1, TextBlock hideText2)
-    {
-
-        hideText1.Visibility = Visibility.Collapsed;
-        hideText2.Visibility = Visibility.Collapsed;
-        hideText1.Opacity = 0;
-        hideText2.Opacity = 0;
-
-        if (showText.Visibility == Visibility.Visible)
-        {
-            showText.Visibility = Visibility.Collapsed;
-            showText.Opacity = 0;
-            //AnimateSlide(LoginPanelTransform, 0);
-        }
-        else
-        {
-            showText.Visibility = Visibility.Visible;
-            //AnimateSlide(LoginPanelTransform, 0);
-            //AnimateFadeIn(showText);
-        }
-    }
-
-    private void AnimateSlide(TranslateTransform transform, double to)
-    {
-        var animation = new System.Windows.Media.Animation.DoubleAnimation
-        {
-            To = to,
-            Duration = TimeSpan.FromSeconds(2),
-            EasingFunction = new System.Windows.Media.Animation.CubicEase { EasingMode = System.Windows.Media.Animation.EasingMode.EaseInOut }
-        };
-        transform.BeginAnimation(TranslateTransform.XProperty, animation);
-    }
-
-    private void AnimateFadeIn(UIElement element)
-    {
-        var fade = new System.Windows.Media.Animation.DoubleAnimation
-        {
-            From = 0,
-            To = 1,
-            Duration = TimeSpan.FromSeconds(0.5),
-        };
-        element.BeginAnimation(UIElement.OpacityProperty, fade);
     }
 
     private void LoginButton_Click(object sender, RoutedEventArgs e)
@@ -98,8 +50,8 @@ public partial class HomePage : Page
         ((MainWindow)Application.Current.MainWindow).AuthorText.Text = "Condeco Assistant";
     }
 
-    private async void RunAutomationButton_Click(object sender, RoutedEventArgs e)
-    {   
+    /*private async void RunAutomationButton_Click(object sender, RoutedEventArgs e)
+    {
         try
         {
             await CondecoAssistant.Automation.AutomationRunner.RunAsync();
@@ -108,7 +60,7 @@ public partial class HomePage : Page
         {
             MessageBox.Show($"An error occurred: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
         }
-    }
+    }*/
 
     /*
     private void RunAutomationButton_Click(object sender, RoutedEventArgs e)
