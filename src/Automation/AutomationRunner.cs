@@ -1,11 +1,14 @@
-using Microsoft.Playwright;
+﻿using Microsoft.Playwright;
 using System;
+using System.IO;
 using System.Threading.Tasks;
 using CondecoAssistant.Helpers;
 using CondecoAssistant.Models;
+using System.Text;
 using System.Windows;
 using System.Diagnostics;
 using System.Security.Cryptography.X509Certificates;
+using System.IO.Pipes;
 
 
 namespace CondecoAssistant.Automation;
@@ -33,100 +36,156 @@ public static class AutomationRunner
         // Initialize Playwright
         var playwright = await Playwright.CreateAsync();
         var browser = await playwright.Chromium.LaunchAsync(new BrowserTypeLaunchOptions { Headless = false });
-        var page = await browser.NewPageAsync();
+
+        var context = await browser.NewContextAsync(new BrowserNewContextOptions
+        {
+            AcceptDownloads = true
+        });
+        var page = await context.NewPageAsync();
+
 
         //List<ILocator> dates = Locators.BookingDates(page);
         //MessageBox.Show(string.Join("\n", dates), "Booking dates", MessageBoxButton.OK, MessageBoxImage.Information);
 
-        // Navigate to Condeco website
-        await page.GotoAsync("https://hoopp.condecosoftware.com");
+        await page.GotoAsync("https://forms.office.com/Pages/DesignPageV2.aspx?origin=NeoPortalPage&subpage=design&id=M2mcV0PS2kqyIhtqjK5-qwx5hocaTG5Lo15V_OGMPIRUMlcxWkJDNFNVNkw5TVBJSEtFQ1IwMDk2WS4u&analysis=true");
 
-        // Sign in page - email
-        await Locators.EmailField(page).WaitForAsync();
-        await Locators.EmailField(page).ClickAsync();
-        await Locators.EmailField(page).FillAsync(username);
-        await Locators.SignInPageNextButton(page).ClickAsync();
+        await Locators.FormsEmailField(page).ClickAsync();
+        await Locators.FormsEmailField(page).FillAsync(username);
+        await Locators.FormsNextButton(page).ClickAsync();
         // Sign in page - password
-        await Locators.PasswordField(page).WaitForAsync();
-        await Locators.PasswordField(page).ClickAsync();
-        await Locators.PasswordField(page).FillAsync(password);
-        await Locators.SignInPage_SignInButton(page).ClickAsync();
+        await Locators.FormsPasswordField(page).ClickAsync();
+        await Locators.FormsPasswordField(page).FillAsync(password);
+        await Locators.FormsSignInPage_SignInButton(page).ClickAsync();
 
-        // Selecting booking dates
-        var bookingDateLocators = Locators.BookingDates(page);
-        var deskLocators = Locators.Desks(page);
-        var remainingDeskLocators = Locators.RemainingDesks(page);
-        // loop through each date and try to book a desk
-        foreach (var dateLocator in bookingDateLocators)
+        await Locators.DropdownButton(page).ClickAsync();
+        var downloadTask = page.WaitForDownloadAsync();
+        await Locators.DownloadButton(page).ClickAsync();
+        var download = await downloadTask;
+
+        var filePath = "C:/Users/slone/Desktop/Repos/CondecoAssistant/src/form_responses.xlsx";
+        await download.SaveAsAsync(filePath);
+        var bookings = ExcelReader.ReadBookings("C:/Users/slone/Desktop/Repos/CondecoAssistant/src/form_responses2.xlsx");
+
+        var bookingsByDay = BookingHelper.GroupByDay(bookings);
+
+        /*var sb = new StringBuilder();
+        foreach (var day in bookingsByDay)
+        {
+            sb.AppendLine($"📅 {day.Key}:");
+
+            foreach (var booking in day.Value)
+            {
+                sb.AppendLine($"- {booking.Name} → {booking.Desk}");
+            }
+
+            sb.AppendLine();
+        }
+
+        MessageBox.Show(sb.ToString(), "Bookings by Day", MessageBoxButton.OK, MessageBoxImage.Information);*/
+
+
+        foreach (var day in bookingsByDay.Where(d => d.Value.Any()))
         {
             try
             {
-                // Always start the booking from the home page
+                await page.GotoAsync("https://hoopp.condecosoftware.com");
                 await Locators.HomePageButton(page).ClickAsync();
-                // Home page left side navigation menu
-                await Locators.PersonalSpacesButton(page).ClickAsync();
-                await Locators.BookAPersonalSpaceButton(page).ClickAsync();
-                // Book a personal space page - confirm selections
-                await Locators.CountryDropdown(page).ClickAsync();
-                await Locators.LocationDropdown(page).ClickAsync();
-                await Locators.GroupDropdown(page).ClickAsync();
-                await Locators.FloorDropdown(page).ClickAsync();
-                await Locators.WorkspaceTypeDropdown(page).ClickAsync();
-                // Select booking date from the calendar
-                await dateLocator.ClickAsync();
-                // Search for desks on selected date
-                await Locators.SearchButton(page).ClickAsync();
-                bool deskBooked = false;
-                // loop through each desk and check for availability
-                foreach (var deskLocator in deskLocators)
+                await Locators.YourTeamButton(page).ClickAsync();
+                await Locators.TeamDaysButton(page).ClickAsync();
+                await page.WaitForTimeoutAsync(2000); // Wait for the page to load
+                await Locators.CreateTeamDayButton(page).ClickAsync();
+                await Locators.CalendarButton(page).ClickAsync();
+                await Locators.SelectMonthButton(page).SelectOptionAsync(new SelectOptionValue { Value = "6" });
+
+                // Try clicking the booking date with timeout
+                var bookingDateLocator = Locators.BookingDate(page, day.Key);
+                var bookingClickTask = bookingDateLocator.ClickAsync();
+                var bookingTimeoutTask = Task.Delay(5000);
+
+                var completedBookingTask = await Task.WhenAny(bookingClickTask, bookingTimeoutTask);
+
+                if (completedBookingTask == bookingTimeoutTask)
                 {
-                    try
+                    Console.WriteLine($"⏳ Timeout: Booking date not clickable for {day.Key}. Skipping.");
+                    continue;
+                }
+                else
+                {
+                    await bookingClickTask;
+                }
+
+                var names = day.Value.Select(b => b.Name).ToList();
+
+                var personCheckboxLocators = Locators.PersonCheckBoxLocators(page, names);
+
+                // Reset selection state
+                await Locators.SelectAllCheckbox(page).ClickAsync();
+                await Locators.SelectAllCheckbox(page).ClickAsync();
+
+                foreach (var person in personCheckboxLocators)
+                {
+                    await person.ClickAsync();
+                }
+
+                await Locators.ContinueToBookingButton(page).ClickAsync();
+
+                foreach (var booking in day.Value)
+                {
+                    // MessageBox.Show($"Booking desk {booking.Desk} for {booking.Name} on {day.Key}", "Booking Desk", MessageBoxButton.OK, MessageBoxImage.Information);
+
+                    var deskLocator = Locators.DeskButtonLocator(page, booking.Desk);
+
+                    // Try to get the parent element with a timeout
+                    var parentHandleTask = deskLocator.EvaluateHandleAsync("el => el.parentElement");
+                    var timeoutTask = Task.Delay(5000);
+
+                    var completedParentTask = await Task.WhenAny(parentHandleTask, timeoutTask);
+
+                    if (completedParentTask == timeoutTask)
                     {
-                        // wait for the desk locator to be available
-                        await deskLocator.WaitForAsync(new LocatorWaitForOptions() { Timeout = 3000 });
-                        // click on the desk locator
-                        await deskLocator.ClickAsync();
-                        await Locators.BookDeskButton(page).ClickAsync();
-                        await Locators.OKButton(page).ClickAsync();
-                        deskBooked = true;
-                        // break out of loop and move onto the next date for booking
-                        break;
+                        Console.WriteLine($"⏳ Timeout: Could not get parent for desk {booking.Desk} on {day.Key}");
+                        continue;
                     }
-                    // if the desk in priority is not found, continue to the next desk in the list
-                    catch (Exception)
+
+                    var parentHandle = await parentHandleTask;
+
+                    // Check if the parent has the 'icon-selected' class
+                    bool isSelected = await parentHandle.EvaluateAsync<bool>("el => el.classList.contains('icon-selected')");
+
+                    if (!isSelected)
                     {
-                        Console.WriteLine($"Desks not available, trying next.");
+                        var clickTask = deskLocator.ClickAsync();
+                        var clickTimeoutTask = Task.Delay(5000);
+
+                        var completedClickTask = await Task.WhenAny(clickTask, clickTimeoutTask);
+
+                        if (completedClickTask == clickTimeoutTask)
+                        {
+                            Console.WriteLine($"⏳ Timeout: Desk {booking.Desk} not clickable for {booking.Name} on {day.Key}");
+                        }
+                        else
+                        {
+                            await clickTask;
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine($"✅ Desk {booking.Desk} already selected for {booking.Name} on {day.Key}");
                     }
                 }
-                if (!deskBooked)
-                {
-                    foreach (var remainingDesk in remainingDeskLocators)
-                    {
-                        try
-                        {
-                            // wait for the desk locator to be available
-                            await remainingDesk.WaitForAsync(new LocatorWaitForOptions() { Timeout = 3000 });
-                            // click on the desk locator
-                            await remainingDesk.ClickAsync();
-                            await Locators.BookDeskButton(page).ClickAsync();
-                            await Locators.OKButton(page).ClickAsync();
-                            deskBooked = true;
-                            // break out of loop and move onto the next date for booking
-                            break;
-                        }
-                        // if the desk in priority is not found, continue to the next desk in the list
-                        catch (Exception)
-                        {
-                            Console.WriteLine($"Desks not available, trying next.");
-                        }
-                    }
-                }
+
+                // await page.PauseAsync();
+                // await Locators.BookAndSendInvitesButton(page).ClickAsync();
+                // await Locators.DoneButton(page).ClickAsync();
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error selecting booking date: {ex.Message}");
+                Console.WriteLine($"❌ Error on {day.Key}: {ex.Message}");
+                continue; // Skip this date if anything fails
             }
         }
+
+
         await browser.CloseAsync();
     }
 }

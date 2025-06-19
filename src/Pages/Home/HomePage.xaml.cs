@@ -12,7 +12,6 @@ using CondecoAssistant.Pages.Login;
 using CondecoAssistant.Pages.Days;
 using CondecoAssistant.Pages.Desks;
 using CondecoAssistant.Automation;
-using CondecoAssistant.Pages.Information;
 using System.Threading.Tasks;
 
 namespace CondecoAssistant.Pages.Home;
@@ -22,16 +21,10 @@ public partial class HomePage : Page
     public HomePage()
     {
         InitializeComponent();
-
-        // Attach event handlers to InfoButtons
-        //InfoButton1.Click += (s, e) => ToggleVisibility(LoginInfoText, DaysInfoText, DesksInfoText);
-        //InfoButton2.Click += (s, e) => ToggleVisibility(DaysInfoText, LoginInfoText, DesksInfoText);
-        //InfoButton3.Click += (s, e) => ToggleVisibility(DesksInfoText, LoginInfoText, DaysInfoText);
     }
 
     private void ToggleVisibility(TextBlock showText, TextBlock hideText1, TextBlock hideText2)
     {
-
         hideText1.Visibility = Visibility.Collapsed;
         hideText2.Visibility = Visibility.Collapsed;
         hideText1.Opacity = 0;
@@ -41,13 +34,10 @@ public partial class HomePage : Page
         {
             showText.Visibility = Visibility.Collapsed;
             showText.Opacity = 0;
-            //AnimateSlide(LoginPanelTransform, 0);
         }
         else
         {
             showText.Visibility = Visibility.Visible;
-            //AnimateSlide(LoginPanelTransform, 0);
-            //AnimateFadeIn(showText);
         }
     }
 
@@ -91,15 +81,9 @@ public partial class HomePage : Page
         ((MainWindow)Application.Current.MainWindow).HeaderText.Text = "Desks";
         ((MainWindow)Application.Current.MainWindow).AuthorText.Text = "Condeco Assistant";
     }
-    private void BackButton_Click(object sender, RoutedEventArgs e)
-    {
-        ((MainWindow)Application.Current.MainWindow).MainFrame.Navigate(new InformationPage());
-        ((MainWindow)Application.Current.MainWindow).HeaderText.Text = "App Information";
-        ((MainWindow)Application.Current.MainWindow).AuthorText.Text = "Condeco Assistant";
-    }
 
     private async void RunAutomationButton_Click(object sender, RoutedEventArgs e)
-    {   
+    {
         try
         {
             await CondecoAssistant.Automation.AutomationRunner.RunAsync();
@@ -110,14 +94,38 @@ public partial class HomePage : Page
         }
     }
 
-    /*
-    private void RunAutomationButton_Click(object sender, RoutedEventArgs e)
+    // AddMonday_Click handler
+    private void AddMonday_Click(object sender, RoutedEventArgs e)
     {
-        //AutomationScheduler.StartRecurring();
-        //MessageBox.Show("Automation will run next Wednesday at 1:00am.", "Automation Scheduled", MessageBoxButton.OK, MessageBoxImage.Information);
+        // TODO: Implement logic for adding Monday
+        MessageBox.Show("Monday added!", "Info", MessageBoxButton.OK, MessageBoxImage.Information);
+    }
 
-    }*/
+    // AddTuesday_Click handler
+    private void AddTuesday_Click(object sender, RoutedEventArgs e)
+    {
+        // TODO: Implement logic for adding Tuesday
+        MessageBox.Show("Tuesday added!", "Info", MessageBoxButton.OK, MessageBoxImage.Information);
+    }
 
+    // AddWednesday_Click handler
+    private void AddWednesday_Click(object sender, RoutedEventArgs e)
+    {
+        // TODO: Implement logic for adding Wednesday
+        MessageBox.Show("Wednesday added!", "Info", MessageBoxButton.OK, MessageBoxImage.Information);
+    }
 
+    // AddThursday_Click handler
+    private void AddThursday_Click(object sender, RoutedEventArgs e)
+    {
+        // TODO: Implement logic for adding Thursday
+        MessageBox.Show("Thursday added!", "Info", MessageBoxButton.OK, MessageBoxImage.Information);
+    }
 
+    // AddFriday_Click handler
+    private void AddFriday_Click(object sender, RoutedEventArgs e)
+    {
+        // TODO: Implement logic for adding Friday
+        MessageBox.Show("Friday added!", "Info", MessageBoxButton.OK, MessageBoxImage.Information);
+    }
 }
