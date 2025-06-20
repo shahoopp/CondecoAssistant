@@ -8,14 +8,14 @@ public static class TaskSchedulerHelper
     {
         using (TaskService ts = new TaskService())
         {
-            const string taskName = "CondecoDeskBooking";
+            const string taskName = "EngageAssistant";
 
             TaskDefinition td = ts.NewTask();
-            td.RegistrationInfo.Description = "Runs CondecoAssistant automation";
+            td.RegistrationInfo.Description = "Runs Engage desk booking automation";
 
             td.Triggers.Add(new WeeklyTrigger
             {
-                StartBoundary = DateTime.Today.AddHours(23).AddMinutes(59),
+                StartBoundary = DateTime.Today.AddHours(23).AddMinutes(58),
                 DaysOfWeek = DaysOfTheWeek.Tuesday,
                 Enabled = true
             });

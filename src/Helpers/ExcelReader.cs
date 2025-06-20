@@ -18,15 +18,13 @@ public static class ExcelReader
         foreach (var row in rows)
         {
             var name = row.Cell(5).GetString();
-            var email = row.Cell(4).GetString();
-            var desk = row.Cell(9).GetString();
-            var daysRaw = row.Cell(8).GetString();
+            var desk = row.Cell(8).GetString();
+            var daysRaw = row.Cell(7).GetString();
             var days = daysRaw.Split(';', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
 
             bookings.Add(new DeskBooking
             {
                 Name = name,
-                Email = email,
                 Desk = desk,
                 Days = new List<string>(days)
             });

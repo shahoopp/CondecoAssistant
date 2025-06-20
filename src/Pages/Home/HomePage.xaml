@@ -11,7 +11,31 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Orientation="Vertical">
-            <Button 
+			<TextBlock
+    Text="Enter forms link"
+    FontSize="20"
+    Margin="0,0,0,10"
+    HorizontalAlignment="Center" />
+
+			<TextBox
+				x:Name="FormsLinkTextBox"
+				Width="600"
+				Height="30"
+				FontSize="16"
+				Margin="0,0,0,10"
+				TextWrapping="Wrap" />
+
+			<Button
+				Content="Save Link"
+				FontSize="20"
+				Background="#009944"
+				Foreground="White"
+				Width="150"
+				Height="40"
+				Click="SaveFormsLinkButton_Click"
+				Margin="0,0,0,10" />
+
+			<Button 
                 Content="Run Now" 
                 FontSize="40"
                 Background="#009944"

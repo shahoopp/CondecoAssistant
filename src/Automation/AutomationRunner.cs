@@ -19,14 +19,23 @@ public static class AutomationRunner
     {
         var stopwatch = new Stopwatch();
         stopwatch.Start();
+        var startTime = stopwatch.Elapsed;
 
         var prefs = PreferencesStorage.Load();
         string username = prefs.Username;
         string password = prefs.Password;
+        string formsLink = prefs.FormsLink;
 
         if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
         {
             Console.WriteLine("Username or password is not set. Please set them in the application.");
+            return;
+        }
+
+
+        if (string.IsNullOrEmpty(formsLink))
+        {
+            Console.WriteLine("Forms link not found. Please save it from the Home Page.");
             return;
         }
 
@@ -38,7 +47,7 @@ public static class AutomationRunner
         });
         var page = await context.NewPageAsync();
         // Go to the MS form
-        await page.GotoAsync("https://forms.office.com/Pages/DesignPageV2.aspx?origin=NeoPortalPage&subpage=design&id=M2mcV0PS2kqyIhtqjK5-qwx5hocaTG5Lo15V_OGMPIRUMlcxWkJDNFNVNkw5TVBJSEtFQ1IwMDk2WS4u&analysis=true");
+        await page.GotoAsync(formsLink);
         // Enter email
         await Locators.FormsEmailField(page).ClickAsync();
         await Locators.FormsEmailField(page).FillAsync(username);
@@ -54,8 +63,6 @@ public static class AutomationRunner
         await Locators.DownloadButton(page).ClickAsync();
         var download = await downloadTask;
 
-        await page.PauseAsync();
-
         // Save the form responses locally in the project
         var filePath = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, @"..\..\..\form_responses.xlsx"));
         await download.SaveAsAsync(filePath);
@@ -64,6 +71,8 @@ public static class AutomationRunner
         var bookings = ExcelReader.ReadBookings(bookingsPath);
 
         var bookingsByDay = BookingHelper.GroupByDay(bookings);
+
+        await page.WaitForTimeoutAsync(120000); // Remain idle for 100 seconds and let the next day bookings open up (12:01am)
 
         // View the bookings by day in a message box
         /*var sb = new StringBuilder();
@@ -93,9 +102,23 @@ public static class AutomationRunner
                 await page.WaitForTimeoutAsync(2000); // Wait for the page to load
                 await Locators.CreateTeamDayButton(page).ClickAsync();
                 await Locators.CalendarButton(page).ClickAsync();
-                await Locators.SelectMonthButton(page).SelectOptionAsync(new SelectOptionValue { Value = "6" });
+                //await page.PauseAsync();
 
-                // Try clicking the booking date with timeout
+
+                var today = DateTime.Today;
+                var bookingStart = today.AddDays(14 - (int)today.DayOfWeek + (int)DayOfWeek.Monday); // 2 Mondays from now
+                var bookingWeek = Enumerable.Range(0, 7).Select(i => bookingStart.AddDays(i)).ToList();
+
+                int currentMonth = today.Month;
+                bool includesNextMonth = bookingWeek.Any(d => d.Month != currentMonth);
+
+                // Try the most likely month first
+                string primaryMonth = includesNextMonth ? "6" : "5";
+                string fallbackMonth = includesNextMonth ? "5" : "6";
+
+                // Try primary month
+                await Locators.SelectMonthButton(page).SelectOptionAsync(new SelectOptionValue { Value = primaryMonth });
+
                 var bookingDateLocator = Locators.BookingDate(page, day.Key);
                 var bookingClickTask = bookingDateLocator.ClickAsync();
                 var bookingTimeoutTask = Task.Delay(5000);
@@ -104,14 +127,35 @@ public static class AutomationRunner
 
                 if (completedBookingTask == bookingTimeoutTask)
                 {
-                    Console.WriteLine($"⏳ Timeout: Booking date not clickable for {day.Key}. Skipping.");
-                    continue;
+                    await page.GotoAsync("https://hoopp.condecosoftware.com");
+                    await Locators.HomePageButton(page).ClickAsync();
+                    await Locators.YourTeamButton(page).ClickAsync();
+                    await Locators.TeamDaysButton(page).ClickAsync();
+                    await page.WaitForTimeoutAsync(2000); // Wait for the page to load
+                    await Locators.CreateTeamDayButton(page).ClickAsync();
+                    await Locators.CalendarButton(page).ClickAsync();
+                    await Locators.SelectMonthButton(page).SelectOptionAsync(new SelectOptionValue { Value = fallbackMonth });
+
+                    bookingClickTask = bookingDateLocator.ClickAsync();
+                    bookingTimeoutTask = Task.Delay(5000);
+                    completedBookingTask = await Task.WhenAny(bookingClickTask, bookingTimeoutTask);
+
+                    if (completedBookingTask == bookingTimeoutTask)
+                    {
+                        // Still failed, skip or log
+                        continue;
+                    }
+                    else
+                    {
+                        await bookingClickTask;
+                    }
                 }
                 else
                 {
                     await bookingClickTask;
                 }
-                
+
+
                 var names = day.Value.Select(b => b.Name).ToList();
                 // Get the checkboxes locators for the names
                 var personCheckboxLocators = Locators.PersonCheckBoxLocators(page, names);
@@ -187,6 +231,12 @@ public static class AutomationRunner
         await browser.CloseAsync();
 
         stopwatch.Stop();
-        //MessageBox.Show($"Automation completed in {stopwatch.Elapsed.TotalSeconds:F2} seconds.", "Time Taken", MessageBoxButton.OK, MessageBoxImage.Information);
+        var endTime = stopwatch.Elapsed;
+        MessageBox.Show(
+            $"Automation completed in {endTime.TotalSeconds:F2} seconds.\n\nStart Time: {DateTime.Now.Subtract(endTime - startTime):yyyy-MM-dd HH:mm:ss}\nEnd Time: {DateTime.Now:yyyy-MM-dd HH:mm:ss}",
+            "Time Taken",
+            MessageBoxButton.OK,
+            MessageBoxImage.Information
+        );
     }
 }
