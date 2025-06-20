@@ -6,7 +6,7 @@
   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"  
   xmlns:local="clr-namespace:CondecoAssistant"  
   mc:Ignorable="d"  
-  Title="CondecoAssistant"  
+  Title="EngageAssistant"  
   Height="650"  
   Width="900">  
   <Grid>  
@@ -19,7 +19,7 @@
           <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">  
               <TextBlock  
                   x:Name="HeaderText"  
-                  Text="Condeco Assistant"  
+                  Text="Engage Assistant"  
                   Margin="0,0,0,0"  
                   Foreground="White"  
                   FontSize="60"  

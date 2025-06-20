@@ -17,6 +17,9 @@ public static class AutomationRunner
 {
     public static async Task RunAsync()
     {
+        var stopwatch = new Stopwatch();
+        stopwatch.Start();
+
         var prefs = PreferencesStorage.Load();
         string username = prefs.Username;
         string password = prefs.Password;
@@ -27,47 +30,42 @@ public static class AutomationRunner
             return;
         }
 
-        //List<string> days = prefs.SelectedDays;
-        //MessageBox.Show(string.Join("\n", days), "Booking days", MessageBoxButton.OK, MessageBoxImage.Information);
-
-        //List<string> desks = prefs.SelectedDesksInPriority;
-        //MessageBox.Show(string.Join("\n", desks), "Booking desks", MessageBoxButton.OK, MessageBoxImage.Information);
-
-        // Initialize Playwright
         var playwright = await Playwright.CreateAsync();
         var browser = await playwright.Chromium.LaunchAsync(new BrowserTypeLaunchOptions { Headless = false });
-
         var context = await browser.NewContextAsync(new BrowserNewContextOptions
         {
             AcceptDownloads = true
         });
         var page = await context.NewPageAsync();
-
-
-        //List<ILocator> dates = Locators.BookingDates(page);
-        //MessageBox.Show(string.Join("\n", dates), "Booking dates", MessageBoxButton.OK, MessageBoxImage.Information);
-
+        // Go to the MS form
         await page.GotoAsync("https://forms.office.com/Pages/DesignPageV2.aspx?origin=NeoPortalPage&subpage=design&id=M2mcV0PS2kqyIhtqjK5-qwx5hocaTG5Lo15V_OGMPIRUMlcxWkJDNFNVNkw5TVBJSEtFQ1IwMDk2WS4u&analysis=true");
-
+        // Enter email
         await Locators.FormsEmailField(page).ClickAsync();
         await Locators.FormsEmailField(page).FillAsync(username);
         await Locators.FormsNextButton(page).ClickAsync();
-        // Sign in page - password
+        // Enter password
         await Locators.FormsPasswordField(page).ClickAsync();
         await Locators.FormsPasswordField(page).FillAsync(password);
         await Locators.FormsSignInPage_SignInButton(page).ClickAsync();
 
+        // Download the form responses
         await Locators.DropdownButton(page).ClickAsync();
         var downloadTask = page.WaitForDownloadAsync();
         await Locators.DownloadButton(page).ClickAsync();
         var download = await downloadTask;
 
-        var filePath = "C:/Users/slone/Desktop/Repos/CondecoAssistant/src/form_responses.xlsx";
+        await page.PauseAsync();
+
+        // Save the form responses locally in the project
+        var filePath = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, @"..\..\..\form_responses.xlsx"));
         await download.SaveAsAsync(filePath);
-        var bookings = ExcelReader.ReadBookings("C:/Users/slone/Desktop/Repos/CondecoAssistant/src/form_responses2.xlsx");
+
+        var bookingsPath = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, @"..\..\..\form_responses2.xlsx"));
+        var bookings = ExcelReader.ReadBookings(bookingsPath);
 
         var bookingsByDay = BookingHelper.GroupByDay(bookings);
 
+        // View the bookings by day in a message box
         /*var sb = new StringBuilder();
         foreach (var day in bookingsByDay)
         {
@@ -83,7 +81,7 @@ public static class AutomationRunner
 
         MessageBox.Show(sb.ToString(), "Bookings by Day", MessageBoxButton.OK, MessageBoxImage.Information);*/
 
-
+        // Iterate through each day and make bookings
         foreach (var day in bookingsByDay.Where(d => d.Value.Any()))
         {
             try
@@ -113,15 +111,16 @@ public static class AutomationRunner
                 {
                     await bookingClickTask;
                 }
-
+                
                 var names = day.Value.Select(b => b.Name).ToList();
-
+                // Get the checkboxes locators for the names
                 var personCheckboxLocators = Locators.PersonCheckBoxLocators(page, names);
 
                 // Reset selection state
                 await Locators.SelectAllCheckbox(page).ClickAsync();
                 await Locators.SelectAllCheckbox(page).ClickAsync();
 
+                // Select the checkboxes for the names
                 foreach (var person in personCheckboxLocators)
                 {
                     await person.ClickAsync();
@@ -185,7 +184,9 @@ public static class AutomationRunner
             }
         }
 
-
         await browser.CloseAsync();
+
+        stopwatch.Stop();
+        //MessageBox.Show($"Automation completed in {stopwatch.Elapsed.TotalSeconds:F2} seconds.", "Time Taken", MessageBoxButton.OK, MessageBoxImage.Information);
     }
 }

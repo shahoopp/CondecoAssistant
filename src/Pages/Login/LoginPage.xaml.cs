@@ -42,7 +42,7 @@ public partial class LoginPage : Page
         MessageBox.Show("Login info saved.");
     }
 
-    private void ShowPassWordButton_PreviewMouseDown(object sender, MouseButtonEventArgs e)
+    /*private void ShowPassWordButton_PreviewMouseDown(object sender, MouseButtonEventArgs e)
     {
         VisiblePasswordBox.Text = PasswordBox.Password;
         VisiblePasswordBox.Visibility = Visibility.Visible;
@@ -53,5 +53,5 @@ public partial class LoginPage : Page
     {
         VisiblePasswordBox.Visibility = Visibility.Collapsed;
         PasswordBox.Visibility = Visibility.Visible;
-    }
+    }*/
 }

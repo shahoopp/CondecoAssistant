@@ -58,16 +58,18 @@ Click="BackButton_Click" />
               Visibility="Collapsed" 
               IsReadOnly="True"/>
 
+           <!--
            <Button 
-              Content="👁️"
-              Width="50"
-              Height="50"
-              FontSize="18"
-              Margin="5,10,50,0"
-              HorizontalAlignment="Right"
-              VerticalAlignment="Top"
-              PreviewMouseDown="ShowPassWordButton_PreviewMouseDown"
-              PreviewMouseUp="ShowPassWordButton_PreviewMouseUp"/>
+               Content="👁️"
+               Width="50"
+               Height="50"
+               FontSize="18"
+               Margin="5,10,50,0"
+               HorizontalAlignment="Right"
+               VerticalAlignment="Top"
+               PreviewMouseDown="ShowPassWordButton_PreviewMouseDown"
+               PreviewMouseUp="ShowPassWordButton_PreviewMouseUp"/>
+           -->
 
            <Button 
               Content="Save" 
