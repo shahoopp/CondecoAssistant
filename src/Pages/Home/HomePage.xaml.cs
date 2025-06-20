@@ -55,11 +55,11 @@ public partial class HomePage : Page
         }
     }
 
-    private async void RunAutomationLaterButton_Click(object sender, RoutedEventArgs e)
+    private void RunAutomationLaterButton_Click(object sender, RoutedEventArgs e)
     {
         try
         {
-            MessageBox.Show("Automation will run at 11:59 PM Tuesday.", "Scheduled Automation", MessageBoxButton.OK, MessageBoxImage.Information);
+            MessageBox.Show("Automation will run at 11:58 PM Today.\nPlease do not close the app, sleep, or shut down your laptop.", "Scheduled Automation", MessageBoxButton.OK, MessageBoxImage.Information);
             CondecoAssistant.Automation.AutomationScheduler.StartRecurring();
         }
         catch (Exception ex)

@@ -19,7 +19,7 @@ public static class AutomationRunner
     {
         var stopwatch = new Stopwatch();
         stopwatch.Start();
-        var startTime = stopwatch.Elapsed;
+        var startTime = DateTime.Now;
 
         var prefs = PreferencesStorage.Load();
         string username = prefs.Username;
@@ -31,7 +31,6 @@ public static class AutomationRunner
             Console.WriteLine("Username or password is not set. Please set them in the application.");
             return;
         }
-
 
         if (string.IsNullOrEmpty(formsLink))
         {
@@ -67,43 +66,38 @@ public static class AutomationRunner
         var filePath = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, @"..\..\..\form_responses.xlsx"));
         await download.SaveAsAsync(filePath);
 
+        // Prepare log file
+        var logFilePath = Path.ChangeExtension(filePath, ".log");
+        var logSb = new StringBuilder();
+        logSb.AppendLine($"=== Automation Run Started ===");
+        logSb.AppendLine($"Start Time: {startTime:yyyy-MM-dd HH:mm:ss}");
+        logSb.AppendLine();
+
         var bookingsPath = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, @"..\..\..\form_responses2.xlsx"));
         var bookings = ExcelReader.ReadBookings(bookingsPath);
 
         var bookingsByDay = BookingHelper.GroupByDay(bookings);
 
-        await page.WaitForTimeoutAsync(120000); // Remain idle for 100 seconds and let the next day bookings open up (12:01am)
+        await page.GotoAsync("https://hoopp.condecosoftware.com");
 
-        // View the bookings by day in a message box
-        /*var sb = new StringBuilder();
-        foreach (var day in bookingsByDay)
-        {
-            sb.AppendLine($"📅 {day.Key}:");
+        //await page.WaitForTimeoutAsync(120000); // Remain idle for 100 seconds and let the next day bookings open up (12:01am)
 
-            foreach (var booking in day.Value)
-            {
-                sb.AppendLine($"- {booking.Name} → {booking.Desk}");
-            }
+        var successfulBookings = new List<string>();
+        var failedBookings = new List<string>();
 
-            sb.AppendLine();
-        }
-
-        MessageBox.Show(sb.ToString(), "Bookings by Day", MessageBoxButton.OK, MessageBoxImage.Information);*/
+        await Locators.HomePageButton(page).ClickAsync();
+        await Locators.YourTeamButton(page).ClickAsync();
+        await Locators.TeamDaysButton(page).ClickAsync();
+        
 
         // Iterate through each day and make bookings
         foreach (var day in bookingsByDay.Where(d => d.Value.Any()))
         {
             try
             {
-                await page.GotoAsync("https://hoopp.condecosoftware.com");
-                await Locators.HomePageButton(page).ClickAsync();
-                await Locators.YourTeamButton(page).ClickAsync();
-                await Locators.TeamDaysButton(page).ClickAsync();
                 await page.WaitForTimeoutAsync(2000); // Wait for the page to load
                 await Locators.CreateTeamDayButton(page).ClickAsync();
                 await Locators.CalendarButton(page).ClickAsync();
-                //await page.PauseAsync();
-
 
                 var today = DateTime.Today;
                 var bookingStart = today.AddDays(14 - (int)today.DayOfWeek + (int)DayOfWeek.Monday); // 2 Mondays from now
@@ -127,10 +121,7 @@ public static class AutomationRunner
 
                 if (completedBookingTask == bookingTimeoutTask)
                 {
-                    await page.GotoAsync("https://hoopp.condecosoftware.com");
-                    await Locators.HomePageButton(page).ClickAsync();
-                    await Locators.YourTeamButton(page).ClickAsync();
-                    await Locators.TeamDaysButton(page).ClickAsync();
+                    await Locators.CloseButton(page).ClickAsync();
                     await page.WaitForTimeoutAsync(2000); // Wait for the page to load
                     await Locators.CreateTeamDayButton(page).ClickAsync();
                     await Locators.CalendarButton(page).ClickAsync();
@@ -142,7 +133,7 @@ public static class AutomationRunner
 
                     if (completedBookingTask == bookingTimeoutTask)
                     {
-                        // Still failed, skip or log
+                        logSb.AppendLine($"[FAIL] Could not select booking date {day.Key:yyyy-MM-dd} (timeout)");
                         continue;
                     }
                     else
@@ -154,7 +145,6 @@ public static class AutomationRunner
                 {
                     await bookingClickTask;
                 }
-
 
                 var names = day.Value.Select(b => b.Name).ToList();
                 // Get the checkboxes locators for the names
@@ -174,8 +164,6 @@ public static class AutomationRunner
 
                 foreach (var booking in day.Value)
                 {
-                    // MessageBox.Show($"Booking desk {booking.Desk} for {booking.Name} on {day.Key}", "Booking Desk", MessageBoxButton.OK, MessageBoxImage.Information);
-
                     var deskLocator = Locators.DeskButtonLocator(page, booking.Desk);
 
                     // Try to get the parent element with a timeout
@@ -186,7 +174,9 @@ public static class AutomationRunner
 
                     if (completedParentTask == timeoutTask)
                     {
-                        Console.WriteLine($"⏳ Timeout: Could not get parent for desk {booking.Desk} on {day.Key}");
+                        var failMsg = $"[FAIL] {day.Key:yyyy-MM-dd}: Could not get parent for desk {booking.Desk} ({booking.Name})";
+                        failedBookings.Add(failMsg);
+                        logSb.AppendLine(failMsg);
                         continue;
                     }
 
@@ -204,26 +194,51 @@ public static class AutomationRunner
 
                         if (completedClickTask == clickTimeoutTask)
                         {
-                            Console.WriteLine($"⏳ Timeout: Desk {booking.Desk} not clickable for {booking.Name} on {day.Key}");
+                            var failMsg = $"[FAIL] {day.Key:yyyy-MM-dd}: Desk {booking.Desk} not clickable for {booking.Name}";
+                            failedBookings.Add(failMsg);
+                            logSb.AppendLine(failMsg);
                         }
                         else
                         {
                             await clickTask;
+                            var successMsg = $"[OK] {day.Key:yyyy-MM-dd}: Booked desk {booking.Desk} for {booking.Name}";
+                            successfulBookings.Add(successMsg);
+                            logSb.AppendLine(successMsg);
                         }
                     }
                     else
                     {
-                        Console.WriteLine($"✅ Desk {booking.Desk} already selected for {booking.Name} on {day.Key}");
+                        var alreadyMsg = $"[OK] {day.Key:yyyy-MM-dd}: Desk {booking.Desk} already selected for {booking.Name}";
+                        successfulBookings.Add(alreadyMsg);
+                        logSb.AppendLine(alreadyMsg);
                     }
                 }
 
-                // await page.PauseAsync();
-                // await Locators.BookAndSendInvitesButton(page).ClickAsync();
-                // await Locators.DoneButton(page).ClickAsync();
+                await page.PauseAsync(); // Pause to allow user to see the result
+                await Locators.BookAndSendInvitesButton(page).ClickAsync();
+                //await page.PauseAsync(); // Pause to allow user to see the result
+                                         // After BookAndSendInvitesButton is clicked, check for "I have enough space" button and click if present
+                try
+                {
+                    var enoughSpaceButton = Locators.IHaveEnoughSpaceButton(page);
+                    if (await enoughSpaceButton.IsVisibleAsync(new() { Timeout = 2000 }))
+                    {
+                        await enoughSpaceButton.ClickAsync();
+                    }
+                }
+                catch
+                {
+                    // Ignore if not found or not clickable, continue as normal
+                }
+                //await page.PauseAsync(); // Pause to allow user to see the result
+                await Locators.DoneButton(page).ClickAsync();
+                await page.PauseAsync(); // Pause to allow user to see the result
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"❌ Error on {day.Key}: {ex.Message}");
+                var failMsg = $"[FAIL] {day.Key:yyyy-MM-dd}: Exception - {ex.Message}";
+                failedBookings.Add(failMsg);
+                logSb.AppendLine(failMsg);
                 continue; // Skip this date if anything fails
             }
         }
@@ -231,9 +246,30 @@ public static class AutomationRunner
         await browser.CloseAsync();
 
         stopwatch.Stop();
-        var endTime = stopwatch.Elapsed;
+        var endTime = DateTime.Now;
+        var duration = stopwatch.Elapsed;
+
+        logSb.AppendLine();
+        logSb.AppendLine($"=== Automation Run Ended ===");
+        logSb.AppendLine($"End Time: {endTime:yyyy-MM-dd HH:mm:ss}");
+        logSb.AppendLine($"Duration: {duration.TotalSeconds:F2} seconds");
+        logSb.AppendLine();
+        logSb.AppendLine("Summary:");
+        logSb.AppendLine($"Successful bookings: {successfulBookings.Count}");
+        logSb.AppendLine($"Unsuccessful bookings: {failedBookings.Count}");
+
+        // Write log to file
+        try
+        {
+            File.WriteAllText(logFilePath, logSb.ToString());
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Could not write log file: {ex.Message}");
+        }
+
         MessageBox.Show(
-            $"Automation completed in {endTime.TotalSeconds:F2} seconds.\n\nStart Time: {DateTime.Now.Subtract(endTime - startTime):yyyy-MM-dd HH:mm:ss}\nEnd Time: {DateTime.Now:yyyy-MM-dd HH:mm:ss}",
+            $"Automation completed in {duration.TotalSeconds:F2} seconds.\n\nStart Time: {startTime:yyyy-MM-dd HH:mm:ss}\nEnd Time: {endTime:yyyy-MM-dd HH:mm:ss}\n\nLog saved to:\n{logFilePath}",
             "Time Taken",
             MessageBoxButton.OK,
             MessageBoxImage.Information

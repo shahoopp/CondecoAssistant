@@ -6,8 +6,7 @@ using System.Windows;
 namespace CondecoAssistant.Automation;
 public static class Locators
 {
-    // FORMS
-
+    // Sign in
     public static ILocator FormsEmailField(IPage page) =>
         page.GetByRole(AriaRole.Textbox, new() { Name = "Enter your email or phone" });
 
@@ -26,12 +25,14 @@ public static class Locators
     public static ILocator FormsSignInPage_SignInButton(IPage page) =>
     page.GetByRole(AriaRole.Button, new() { Name = "Sign in" });
 
+    // Forms data download
     public static ILocator DropdownButton(IPage page) =>
     page.GetByRole(AriaRole.Button, new() { Name = "More options", Exact = true });
 
     public static ILocator DownloadButton(IPage page) =>
         page.GetByRole(AriaRole.Menuitem, new() { Name = "Download a copy" });
 
+    // Engage (Condeco)
     public static ILocator HomePageButton(IPage page) =>
         page.FrameLocator("iframe[name=\"leftNavigation\"]")
             .GetByRole(AriaRole.Link, new() { Name = " Today" });
@@ -87,8 +88,6 @@ public static class Locators
         .GetByRole(AriaRole.Button, new() { Name = buttonName });
     }
 
-
-
     public static List<ILocator> PersonCheckBoxLocators(IPage page, List<string> names)
     {
         var locators = new List<ILocator>();
@@ -111,8 +110,6 @@ public static class Locators
         page.FrameLocator("iframe[name=\"mainDisplayFrame\"]")
         .GetByRole(AriaRole.Button, new() { Name = "Continue" });
 
-
-
     public static ILocator DeskButtonLocator(IPage page, string deskCode)
     {
         // Remove the "16" prefix if present
@@ -125,17 +122,21 @@ public static class Locators
         .GetByRole(AriaRole.Button, new() { NameRegex = regex });
     }
 
+    public static ILocator CloseButton(IPage page) =>
+        page.FrameLocator("iframe[name=\"mainDisplayFrame\"]")
+            .GetByRole(AriaRole.Button, new() { Name = "Close" });
 
     public static ILocator BookAndSendInvitesButton(IPage page) =>
         page.FrameLocator("iframe[name=\"mainDisplayFrame\"]")
             .GetByRole(AriaRole.Button, new() { Name = "Book & send invites" });
 
+    public static ILocator IHaveEnoughSpaceButton(IPage page) =>
+        page.FrameLocator("iframe[name=\"mainDisplayFrame\"]")
+            .GetByRole(AriaRole.Button, new() { Name = "I have enough space" });
+
     public static ILocator DoneButton(IPage page) =>
                 page.FrameLocator("iframe[name=\"mainDisplayFrame\"]")
             .GetByRole(AriaRole.Button, new() { Name = "Done" });
-
-    // Booking date(s)
-
     
-
+    
 }
