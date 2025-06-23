@@ -214,7 +214,7 @@ public static class AutomationRunner
                     }
                 }
 
-                await page.PauseAsync(); // Pause to allow user to see the result
+                //await page.PauseAsync(); // Pause to allow user to see the result
                 await Locators.BookAndSendInvitesButton(page).ClickAsync();
                 //await page.PauseAsync(); // Pause to allow user to see the result
                                          // After BookAndSendInvitesButton is clicked, check for "I have enough space" button and click if present
@@ -230,9 +230,26 @@ public static class AutomationRunner
                 {
                     // Ignore if not found or not clickable, continue as normal
                 }
+
+                try
+                {
+                    var NoSpacesSelectedCloseButton = Locators.CloseTextButton(page);
+                    if (await NoSpacesSelectedCloseButton.IsVisibleAsync(new() { Timeout = 2000 }))
+                    {
+                        await NoSpacesSelectedCloseButton.ClickAsync();
+                        await Locators.CloseButton(page).ClickAsync(); // Close the modal
+                        continue;
+                    }
+                }
+                catch
+                {
+                    // Ignore if not found or not clickable, continue as normal
+                }
+
+
                 //await page.PauseAsync(); // Pause to allow user to see the result
                 await Locators.DoneButton(page).ClickAsync();
-                await page.PauseAsync(); // Pause to allow user to see the result
+                //await page.PauseAsync(); // Pause to allow user to see the result
             }
             catch (Exception ex)
             {

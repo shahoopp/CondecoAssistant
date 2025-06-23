@@ -130,6 +130,10 @@ public static class Locators
         page.FrameLocator("iframe[name=\"mainDisplayFrame\"]")
             .GetByRole(AriaRole.Button, new() { Name = "Book & send invites" });
 
+    public static ILocator CloseTextButton(IPage page) =>
+    page.FrameLocator("iframe[name=\"mainDisplayFrame\"]")
+        .GetByText("Close");
+
     public static ILocator IHaveEnoughSpaceButton(IPage page) =>
         page.FrameLocator("iframe[name=\"mainDisplayFrame\"]")
             .GetByRole(AriaRole.Button, new() { Name = "I have enough space" });
@@ -137,6 +141,4 @@ public static class Locators
     public static ILocator DoneButton(IPage page) =>
                 page.FrameLocator("iframe[name=\"mainDisplayFrame\"]")
             .GetByRole(AriaRole.Button, new() { Name = "Done" });
-    
-    
 }
