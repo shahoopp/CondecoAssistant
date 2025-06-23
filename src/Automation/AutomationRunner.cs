@@ -28,13 +28,13 @@ public static class AutomationRunner
 
         if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
         {
-            Console.WriteLine("Username or password is not set. Please set them in the application.");
+            Console.WriteLine("Username or password is not set.");
             return;
         }
 
         if (string.IsNullOrEmpty(formsLink))
         {
-            Console.WriteLine("Forms link not found. Please save it from the Home Page.");
+            Console.WriteLine("Forms link not found.");
             return;
         }
 
