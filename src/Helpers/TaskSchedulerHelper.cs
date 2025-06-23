@@ -1,6 +1,5 @@
-using Microsoft.Win32.TaskScheduler;
+﻿using Microsoft.Win32.TaskScheduler;
 using System.IO;
-
 
 public static class TaskSchedulerHelper
 {
@@ -21,11 +20,11 @@ public static class TaskSchedulerHelper
             });
 
             string exePath = System.Reflection.Assembly.GetExecutingAssembly().Location;
-            td.Actions.Add(new ExecAction(exePath, null, Path.GetDirectoryName(exePath)));
+            string arguments = "--auto"; // 👈 Add this line
 
-            // This will override the existing task if it exists
+            td.Actions.Add(new ExecAction(exePath, arguments, Path.GetDirectoryName(exePath)));
+
             ts.RootFolder.RegisterTaskDefinition(taskName, td, TaskCreation.CreateOrUpdate, null, null, TaskLogonType.InteractiveToken);
         }
     }
-
 }

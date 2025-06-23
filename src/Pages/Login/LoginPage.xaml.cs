@@ -28,7 +28,7 @@ public partial class LoginPage : Page
     private void BackButton_Click(object sender, RoutedEventArgs e)
     {
         ((MainWindow)Application.Current.MainWindow).MainFrame.Navigate(new HomePage());
-        ((MainWindow)Application.Current.MainWindow).HeaderText.Text = "Condeco Assistant";
+        ((MainWindow)Application.Current.MainWindow).HeaderText.Text = "Engage Assistant";
         ((MainWindow)Application.Current.MainWindow).AuthorText.Text = "by Shaheer Lone";
 
     }
@@ -39,7 +39,7 @@ public partial class LoginPage : Page
         prefs.Username = UsernameBox.Text;
         prefs.Password = PasswordBox.Password;
         PreferencesStorage.Save(prefs);
-        MessageBox.Show("Login info saved.");
+        MessageBox.Show("Login info saved.", "Saved", MessageBoxButton.OK, MessageBoxImage.Information);
     }
 
     /*private void ShowPassWordButton_PreviewMouseDown(object sender, MouseButtonEventArgs e)

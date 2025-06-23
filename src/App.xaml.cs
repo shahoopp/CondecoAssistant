@@ -8,21 +8,21 @@ namespace CondecoAssistant
 {
     public partial class App : Application
     {
-        protected override void OnStartup(StartupEventArgs e)
+        private async void Application_Startup(object sender, StartupEventArgs e)
         {
-            base.OnStartup(e);
-
-            // Optional: create a scheduled task if it doesn't exist
             TaskSchedulerHelper.CreateOrUpdateScheduledTask();
 
-            // Wait 2 minutes before starting automation
-            //await Task.Delay(TimeSpan.FromMinutes(2));
-
-            // Run the automation
-            //await AutomationRunner.RunAsync();
-
-            // Optional: shut down the app after automation completes
-            //Current.Shutdown();
+            if (e.Args.Length > 0 && e.Args[0] == "--auto")
+            {
+                await AutomationRunner.RunAsync();
+                Shutdown();
+            }
+            else
+            {
+                var mainWindow = new MainWindow();
+                MainWindow = mainWindow;
+                mainWindow.Show();
+            }
         }
     }
 }

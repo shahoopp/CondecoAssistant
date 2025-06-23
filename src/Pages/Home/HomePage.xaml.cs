@@ -35,7 +35,7 @@ public partial class HomePage : Page
             prefs.FormsLink = link;
             PreferencesStorage.Save(prefs);
 
-            MessageBox.Show("Forms link saved successfully.", "Saved", MessageBoxButton.OK, MessageBoxImage.Information);
+            MessageBox.Show("Forms link saved.", "Saved", MessageBoxButton.OK, MessageBoxImage.Information);
         }
         else
         {
@@ -59,7 +59,10 @@ public partial class HomePage : Page
     {
         try
         {
-            MessageBox.Show("Automation will run at 11:58 PM Today.\nPlease do not close the app, sleep, or shut down your laptop.", "Scheduled Automation", MessageBoxButton.OK, MessageBoxImage.Information);
+            MessageBox.Show("You have select a manual automation." +
+                "\n\nAutomation will run at 11:58 PM today." +
+                "\n\nPlease do not close the app, sleep, or shut down your laptop." +
+                "\n\nEnsure that you have used the MS authenticator today to enable login to Engage.", "Scheduled Automation", MessageBoxButton.OK, MessageBoxImage.Information);
             CondecoAssistant.Automation.AutomationScheduler.StartRecurring();
         }
         catch (Exception ex)
@@ -72,6 +75,6 @@ public partial class HomePage : Page
     {
         ((MainWindow)Application.Current.MainWindow).MainFrame.Navigate(new LoginPage());
         ((MainWindow)Application.Current.MainWindow).HeaderText.Text = "Login";
-        ((MainWindow)Application.Current.MainWindow).AuthorText.Text = "Condeco Assistant";
+        ((MainWindow)Application.Current.MainWindow).AuthorText.Text = "Engage Assistant";
     }
 }

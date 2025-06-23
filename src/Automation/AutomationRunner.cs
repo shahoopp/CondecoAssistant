@@ -66,6 +66,9 @@ public static class AutomationRunner
         var filePath = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, @"..\..\..\form_responses.xlsx"));
         await download.SaveAsAsync(filePath);
 
+        //var bookingsPath = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, @"..\..\..\form_responses2.xlsx"));
+        var bookings = ExcelReader.ReadBookings(filePath);
+
         // Prepare log file
         var logFilePath = Path.ChangeExtension(filePath, ".log");
         var logSb = new StringBuilder();
@@ -73,14 +76,11 @@ public static class AutomationRunner
         logSb.AppendLine($"Start Time: {startTime:yyyy-MM-dd HH:mm:ss}");
         logSb.AppendLine();
 
-        var bookingsPath = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, @"..\..\..\form_responses2.xlsx"));
-        var bookings = ExcelReader.ReadBookings(bookingsPath);
-
         var bookingsByDay = BookingHelper.GroupByDay(bookings);
 
         await page.GotoAsync("https://hoopp.condecosoftware.com");
 
-        //await page.WaitForTimeoutAsync(120000); // Remain idle for 100 seconds and let the next day bookings open up (12:01am)
+        await page.WaitForTimeoutAsync(120000); // Remain idle for 120 seconds and let the next day bookings open up (12:01am)
 
         var successfulBookings = new List<string>();
         var failedBookings = new List<string>();
@@ -89,7 +89,6 @@ public static class AutomationRunner
         await Locators.YourTeamButton(page).ClickAsync();
         await Locators.TeamDaysButton(page).ClickAsync();
         
-
         // Iterate through each day and make bookings
         foreach (var day in bookingsByDay.Where(d => d.Value.Any()))
         {
@@ -214,10 +213,8 @@ public static class AutomationRunner
                     }
                 }
 
-                //await page.PauseAsync(); // Pause to allow user to see the result
                 await Locators.BookAndSendInvitesButton(page).ClickAsync();
-                //await page.PauseAsync(); // Pause to allow user to see the result
-                                         // After BookAndSendInvitesButton is clicked, check for "I have enough space" button and click if present
+                // After BookAndSendInvitesButton is clicked, check for "I have enough space" button and click if present
                 try
                 {
                     var enoughSpaceButton = Locators.IHaveEnoughSpaceButton(page);
@@ -246,10 +243,7 @@ public static class AutomationRunner
                     // Ignore if not found or not clickable, continue as normal
                 }
 
-
-                //await page.PauseAsync(); // Pause to allow user to see the result
                 await Locators.DoneButton(page).ClickAsync();
-                //await page.PauseAsync(); // Pause to allow user to see the result
             }
             catch (Exception ex)
             {
@@ -284,12 +278,5 @@ public static class AutomationRunner
         {
             Console.WriteLine($"Could not write log file: {ex.Message}");
         }
-
-        MessageBox.Show(
-            $"Automation completed in {duration.TotalSeconds:F2} seconds.\n\nStart Time: {startTime:yyyy-MM-dd HH:mm:ss}\nEnd Time: {endTime:yyyy-MM-dd HH:mm:ss}\n\nLog saved to:\n{logFilePath}",
-            "Time Taken",
-            MessageBoxButton.OK,
-            MessageBoxImage.Information
-        );
     }
 }
