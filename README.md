@@ -3,14 +3,13 @@ A simple automation tool that securely logs into Condeco, schedules desk booking
 
 ## Features
 
+- **User Data Retrieval**: Fetches user data from Microsoft Forms to streamline the booking process.
 - **Secure Login**: Automates secure login to the Condeco platform.
-- **Desk Booking**: Schedules desk bookings for individual users, ensuring you get your preferred desk at the earliest available time.
+- **Desk Booking**: Schedules desk bookings for individual users based on their selected preference.
 - **Team Booking**: Allows you to book desks for your entire team, ensuring everyone is seated together or according to your team's preferences.
-- **Automated Scheduling**: Automatically checks for desk availability and books as soon as slots open up.
-- **Preference Management**: Lets you set and manage preferred desks and booking times for yourself and your team.
-- **Error Handling**: Notifies you of any booking issues or login failures.
+- **Automated Scheduling**: Automatically checks for desk availability and books as soon as slots open up for the next week(s).
 - **User-Friendly Interface**: Simple WPF-based UI for easy configuration and monitoring of bookings.
 
-## Building the WPF app
+## Installation
 
-For some reason, WPF App (.Net Core) does not appear in the list of project templates in Visual Studio 2022. To create a WPF app, you need to use the command line.
+tbd.
