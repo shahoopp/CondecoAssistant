@@ -61,7 +61,7 @@ public partial class HomePage : Page
         {
             MessageBox.Show("You have select a manual automation." +
                 "\n\nAutomation will run at 11:58 PM today." +
-                "\n\nPlease do not close the app, sleep, or shut down your laptop." +
+                "\n\nPlease do not close the app, or sleep/shut down your laptop." +
                 "\n\nEnsure that you have used the MS authenticator today to enable login to Engage.", "Scheduled Automation", MessageBoxButton.OK, MessageBoxImage.Information);
             CondecoAssistant.Automation.AutomationScheduler.StartRecurring();
         }

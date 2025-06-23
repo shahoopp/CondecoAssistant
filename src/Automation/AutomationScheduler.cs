@@ -17,7 +17,7 @@ public static class AutomationScheduler
     private static async void CheckTime(object? sender, ElapsedEventArgs e)
     {
         DateTime now = DateTime.Now;
-        if (/*now.DayOfWeek == DayOfWeek.Tuesday && */now.Hour == 23 && now.Minute == 58)
+        if (now.Hour == 23 && now.Minute == 58)
         {
             _timer?.Stop(); // Stop the timer to prevent multiple executions
             await AutomationRunner.RunAsync();

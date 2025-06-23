@@ -80,7 +80,7 @@ public static class AutomationRunner
 
         await page.GotoAsync("https://hoopp.condecosoftware.com");
 
-        await page.WaitForTimeoutAsync(120000); // Remain idle for 120 seconds and let the next day bookings open up (12:01am)
+        await page.WaitForTimeoutAsync(12000); // Remain idle for 120 seconds and let the next day bookings open up (12:01am)
 
         var successfulBookings = new List<string>();
         var failedBookings = new List<string>();
