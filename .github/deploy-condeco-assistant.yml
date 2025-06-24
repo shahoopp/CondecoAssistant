@@ -1,0 +1,39 @@
+name: "Deploy Condeco Assistant"    
+
+on:
+    push:
+        tags:
+        - "condeco-assistant/v*"
+ 
+env:
+    PROJECT_PATH: CondecoAssistant/CondecoAssistant.csproj
+ 
+jobs:
+    deploy:
+        runs-on: windows-latest
+        steps:
+            - uses: actions/checkout@v2
+  
+            - uses: actions/setup-dotnet@v1
+              with:
+                dotnet-version: 8.0.x 
+
+            - run: dotnet restore ${{ env.PROJECT_PATH }}
+  
+            - run: dotnet build ${{ env.PROJECT_PATH }} -C Release --no-restore
+  
+            - run: dotnet publish -c Release -r win-x64 --self-contained true /p:PublishSingleFile=true /p:IncludeAllContentForSelfExtract=true /p:PublishTrimmed=false --no-build
+  
+            - uses: actions/create-release@v1
+              id: create_release
+              env:
+                GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+              with:
+                tag_name: ${{ github.ref }}
+                release_name: ${{ github.ref }}
+
+            - uses: shahoopp/release-asset-action@v2
+              with:
+                github-token: ${{ secrets.GITHUB_TOKEN }}
+                pattern: CondecoAssistant/bin/Release/net8.0/win-x64/publish/*.exe
+                release-url: ${{ steps.create_release.outputs.upload_url }}
