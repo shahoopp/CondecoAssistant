@@ -5,6 +5,9 @@ on:
     tags:
       - "condeco-assistant/v*"
 
+permissions:
+  contents: write
+
 env:
   PROJECT_PATH: src/CondecoAssistant.csproj
 
