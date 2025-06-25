@@ -6,7 +6,7 @@ on:
         - "condeco-assistant/v*"
  
 env:
-    PROJECT_PATH: CondecoAssistant/src/CondecoAssistant.csproj
+  PROJECT_PATH: src/CondecoAssistant.csproj
  
 jobs: 
     deploy:
