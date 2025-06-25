@@ -36,4 +36,4 @@ jobs:
               with:
                 files: CondecoAssistant/bin/Release/net8.0/win-x64/publish/*.exe
               env:
-                GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+                GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
