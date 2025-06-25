@@ -20,7 +20,7 @@ jobs:
 
             - run: dotnet restore ${{ env.PROJECT_PATH }}
   
-            - run: dotnet build ${{ env.PROJECT_PATH }} -C Release --no-restore
+            - run: dotnet build ${{ env.PROJECT_PATH }} -c Release --no-restore
   
             - run: dotnet publish -c Release -r win-x64 --self-contained true /p:PublishSingleFile=true /p:IncludeAllContentForSelfExtract=true /p:PublishTrimmed=false --no-build
   
